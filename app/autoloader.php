@@ -2,9 +2,9 @@
 
 spl_autoload_register(function(String $class) {
 
-	$prefix = "Contest\\";
+	$prefix = "ContestApp\\";
 	
-	$sources = sprintf("%s/src/", __DIR__);
+	$sources = sprintf("%s/classes/", __DIR__);
 	$classes = str_replace("\\", "/", substr($class, strlen($prefix)));
 	$classFilePath = sprintf("%s%s.php", $sources, $classes);
 
