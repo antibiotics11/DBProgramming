@@ -1,0 +1,35 @@
+.sign{
+    border:2px solid rgb(51, 219, 149);
+    background-color: rgb(173, 238, 217);
+    text-align: center;
+    width: 500px;
+    height: 300px;
+    border-radius: 5px;
+}
+
+.input_sign{
+    width: 300px;
+    height: 50px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+#signup{
+    height: 730px;
+}
+
+.input_button{
+    width:145px;
+    height: 50px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+#simple_account{
+    border:2px solid black;
+}
+
+#show_account{
+    border:2px solid black;
+    height: 730px;
+}
