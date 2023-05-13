@@ -29,9 +29,11 @@ class StaticResource extends Resource {
 
   }
 
-  private function setType(String $type): void {
+  private function setType(MimeType | String $type): void {
 
-    $type = MimeType::fromName($type) ?? MimeType::_TXT;
+    if (is_string($type)) {
+      $type = MimeType::fromName($type) ?? MimeType::_TXT;
+    }
     $this->setMimeType($type);
 
   }
@@ -95,4 +97,3 @@ class StaticResource extends Resource {
   }
 
 };
-
