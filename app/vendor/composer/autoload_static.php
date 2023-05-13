@@ -6,6 +6,28 @@ namespace Composer\Autoload;
 
 class ComposerStaticInitd87b9d001ba2dd7d435f87053e9184ce
 {
+    public static $prefixLengthsPsr4 = array (
+        'F' => 
+        array (
+            'Firebase\\JWT\\' => 13,
+        ),
+        'C' => 
+        array (
+            'CommandString\\Cookies\\' => 22,
+        ),
+    );
+
+    public static $prefixDirsPsr4 = array (
+        'Firebase\\JWT\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
+        ),
+        'CommandString\\Cookies\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/commandstring/cookies/src',
+        ),
+    );
+
     public static $prefixesPsr0 = array (
         'B' => 
         array (
@@ -23,6 +45,8 @@ class ComposerStaticInitd87b9d001ba2dd7d435f87053e9184ce
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
+            $loader->prefixLengthsPsr4 = ComposerStaticInitd87b9d001ba2dd7d435f87053e9184ce::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitd87b9d001ba2dd7d435f87053e9184ce::$prefixDirsPsr4;
             $loader->prefixesPsr0 = ComposerStaticInitd87b9d001ba2dd7d435f87053e9184ce::$prefixesPsr0;
             $loader->classMap = ComposerStaticInitd87b9d001ba2dd7d435f87053e9184ce::$classMap;
 
