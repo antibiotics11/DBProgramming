@@ -8,8 +8,8 @@ use ContestApp\ViewPage\{HomePage, ErrorPage};
 /**
  * 루트 경로 요청 컨트롤러
  */
-class Index {
-	
+class IndexController {
+
 	// index.* 요청시 홈 페이지로 리디렉션
 	public static function redirect(): void {
 		StatusCode::setStatusCode(StatusCode::MOVED_PERMANENTLY);
@@ -19,7 +19,7 @@ class Index {
 	// favicon.ico 요청시 에셋 디렉터리로 리디렉션
 	public static function favicon(): void {
 		StatusCode::setStatusCode(StatusCode::MOVED_PERMANENTLY);
-		Header::setHeader(Header::LOCATION, 
+		Header::setHeader(Header::LOCATION,
 			sprintf("%s%s", WEB_ASSETS_IMAGE_PATH, Router::PATH_FAVICON_IMAGE)
 		);
 	}

@@ -9,7 +9,7 @@ use ContestApp\System\Time;
 /**
  * 정적 리소스 요청 컨트롤러
  */
-class Assets {
+class AssetController {
 
 	public static function assets(String $name = ""): void {
 
