@@ -6,6 +6,7 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'aalfiann\\' => array($vendorDir . '/aalfiann/json-class-php/src'),
     'Firebase\\JWT\\' => array($vendorDir . '/firebase/php-jwt/src'),
     'CommandString\\Cookies\\' => array($vendorDir . '/commandstring/cookies/src'),
 );
