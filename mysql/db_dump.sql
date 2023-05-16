@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.32, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.33, for Linux (x86_64)
 --
--- Host: localhost    Database: contestDB
+-- Host: localhost    Database: contest_db
 -- ------------------------------------------------------
--- Server version	8.0.32-0ubuntu0.22.04.2
+-- Server version	8.0.33-0ubuntu0.23.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -24,16 +24,19 @@ DROP TABLE IF EXISTS `contest`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `contest` (
   `code` int NOT NULL,
-  `email` varchar(320) NOT NULL,
+  `phone` char(100) NOT NULL,
   `title` char(255) NOT NULL,
   `field` char(50) NOT NULL,
   `headcount` int NOT NULL,
-  `beginningdate` date NOT NULL,
   `deadline` date NOT NULL,
+  `beginningdate` date NOT NULL,
   `done` tinyint(1) NOT NULL DEFAULT '0',
+  `intramural` tinyint(1) DEFAULT '-1',
+  `rating` int DEFAULT '0',
+  `region` int DEFAULT '-1',
   PRIMARY KEY (`code`),
-  KEY `email` (`email`),
-  CONSTRAINT `contest_ibfk_1` FOREIGN KEY (`email`) REFERENCES `members` (`email`) ON DELETE CASCADE
+  KEY `phone` (`phone`),
+  CONSTRAINT `contest_ibfk_1` FOREIGN KEY (`phone`) REFERENCES `member` (`phone`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -47,63 +50,33 @@ LOCK TABLES `contest` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `details`
+-- Table structure for table `member`
 --
 
-DROP TABLE IF EXISTS `details`;
+DROP TABLE IF EXISTS `member`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `details` (
-  `code` int NOT NULL,
-  `major` char(100) DEFAULT NULL,
-  `age` int DEFAULT NULL,
-  `grade` int DEFAULT NULL,
-  `sex` int DEFAULT NULL,
-  `intramural` tinyint(1) DEFAULT NULL,
-  `rating` int DEFAULT NULL,
-  `region` int DEFAULT NULL,
-  PRIMARY KEY (`code`),
-  CONSTRAINT `details_ibfk_1` FOREIGN KEY (`code`) REFERENCES `contest` (`code`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `details`
---
-
-LOCK TABLES `details` WRITE;
-/*!40000 ALTER TABLE `details` DISABLE KEYS */;
-/*!40000 ALTER TABLE `details` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `members`
---
-
-DROP TABLE IF EXISTS `members`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `members` (
-  `email` varchar(320) NOT NULL,
+CREATE TABLE `member` (
+  `phone` char(100) NOT NULL,
   `password` char(255) NOT NULL,
   `name` char(100) NOT NULL,
   `college` char(100) NOT NULL,
   `sex` int NOT NULL,
-  `phone` char(100) NOT NULL,
+  `email` varchar(320) NOT NULL,
   `major` char(100) NOT NULL,
   `birthday` date NOT NULL,
-  `rating` int NOT NULL DEFAULT '3',
-  PRIMARY KEY (`email`)
+  `rating` int NOT NULL DEFAULT '0',
+  PRIMARY KEY (`phone`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `members`
+-- Dumping data for table `member`
 --
 
-LOCK TABLES `members` WRITE;
-/*!40000 ALTER TABLE `members` DISABLE KEYS */;
-/*!40000 ALTER TABLE `members` ENABLE KEYS */;
+LOCK TABLES `member` WRITE;
+/*!40000 ALTER TABLE `member` DISABLE KEYS */;
+/*!40000 ALTER TABLE `member` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -114,11 +87,11 @@ DROP TABLE IF EXISTS `participant`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `participant` (
-  `email` varchar(320) NOT NULL,
+  `phone` char(100) NOT NULL,
   `code` int NOT NULL,
-  PRIMARY KEY (`email`,`code`),
+  PRIMARY KEY (`phone`,`code`),
   KEY `code` (`code`),
-  CONSTRAINT `participant_ibfk_1` FOREIGN KEY (`email`) REFERENCES `members` (`email`) ON DELETE CASCADE,
+  CONSTRAINT `participant_ibfk_1` FOREIGN KEY (`phone`) REFERENCES `member` (`phone`) ON DELETE CASCADE,
   CONSTRAINT `participant_ibfk_2` FOREIGN KEY (`code`) REFERENCES `contest` (`code`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -141,4 +114,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-03-29 17:28:53
+-- Dump completed on 2023-05-16  6:12:44
