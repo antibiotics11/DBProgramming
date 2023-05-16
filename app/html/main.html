@@ -1,67 +1,17 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>main</title>
-        <link rel="stylesheet" href="style.css">
-        <style>
-            body{
-                margin: 0px;
-            }
-            div{
-                text-align: center;
-            }
-            #grid1{
-                display: grid;
-                grid-template-rows: 1fr 5fr 1fr;
-                
-            }
-            #grid2{
-                display: grid;
-                grid-template-columns:1fr 5fr 1fr;
-                
-            }
-            #footer{
-                color:white;
-                background-color: rgb(62, 69, 61);
-            }
-            .footer_a{
-                color: white;
-            }
-            #logo{
-                border-bottom:black 2px solid;
-                text-align: left;
-            }
-            #logo1{
-                height: 200px;
-            }
-            .blank{
-                background-color: rgb(239, 239, 239);;
-            }
-        </style>
-    </head>
-    <body>
-        <div id="grid1">
-            <div id="logo">
-                <img id="logo1" src="logo3.png" alt="로고" >
-                <button type="button">로그인</button>
-            </div>
-            <div id="grid2">
-                <div class="blank">
-                </div>
-                <div>
-
-                </div>
-                <div class="blank">
-                </div>   
-            </div>
-            <div id="footer">
-                <br>
-                <a class="footer_a" href="">개인정보 처리 방침</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a class="footer_a" href="">이용약관</a>
-                <br><br>
-                ⓒ KunsanDBProject                    
-            </div>            
-        </div>
-
-    </body>
-</html>
+<div id="grid1">
+  <div id="logo">
+    <img id="logo1" src="/assets/image/logo3.png" alt="로고" >
+    <button type="button" onclick="location.href='/account/signin'">로그인</button>
+  </div>
+  <div id="grid2">
+    <div class="blank"></div>
+    <div>%s</div>
+    <div class="blank"></div>
+  </div>
+  <div id="footer">
+    <br>
+    <a class="footer_a" href="">개인정보 처리 방침</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a class="footer_a" href="">이용약관</a>
+    <br><br>
+    ⓒ KunsanDBProject
+  </div>
+</div>
