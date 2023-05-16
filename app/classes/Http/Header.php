@@ -7,9 +7,9 @@ namespace ContestApp\Http;
  */
 enum Header: String {
 
-	case CONTENT_TYPE     = "Content-Type";         // 응답 리소스 타입
-	case LAST_MODIFIED    = "Last-Modified";        // 
-	case LOCATION         = "Location";             // 리디렉션시 위치
+	case CONTENT_TYPE     = "Content-Type";         // 리소스 타입
+	case LAST_MODIFIED    = "Last-Modified";        // 리소스의 최종 수정 시간
+	case LOCATION         = "Location";             // 리디렉션 위치
 	case CONTENT_LOCATION = "Content-Location";     // 요청 처리 후 리소스 위치
 
 	/**
@@ -18,10 +18,8 @@ enum Header: String {
 	 * @param Header $attribute 설정할 헤더 속성
 	 * @param String $value 설정할 헤더 값
 	 */
-	public static function setHeader(Header $attribute, String $value): void {
-
+	public static function setServerHeader(Header $attribute, String $value): void {
 		header(sprintf("%s: %s", $attribute->value, trim($value)));
-
 	}
 
 	/**
@@ -30,7 +28,7 @@ enum Header: String {
 	 * @param Header $attribute 특정 헤더를 찾는 경우 헤더 속성
 	 * @return String | Array 특정 헤더를 찾는 경우 해당 헤더, 또는 전체 헤더 값들
 	 */
-	public static function getHeader(Header $attribute = null): String | Array {
+	public static function getServerHeader(Header $attribute = null): String | Array {
 
 		$headers = \headers_list();
 		if ($attribute === null) {

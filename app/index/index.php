@@ -1,23 +1,24 @@
 <?php
 
+declare(ticks = 1, strict_types = 1);
+
 require_once "../autoloader.php";
 require_once "../vendor/autoload.php";
 require_once "../config.php";
 
-\ContestApp\System\Time::setTimeZone("GMT");
+use \ContestApp\Http\{StatusCode, Router};
 
-try {                                 // 라우터를 생성하고 요청을 할당한다.
+try {                               // 라우터를 생성하고 요청을 할당한다.
 
-	$appRouter = new \ContestApp\Http\Router();
+	\ContestApp\System\Time::setTimeZone("GMT");
+	(new Router)->routeRequest();
 
-	$appRouter->setParams($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
-	$appRouter->routeRequest();
+} catch (\Throwable $e) {           // 요청 처리중 예외 또는 오류 발생했다면
 
-} catch (\Throwable $e) {             // 요청 처리중 예외 또는 PHP오류 발생했다면
+	$status = StatusCode::INTERNAL_SERVER_ERROR;
+	$message = StatusCode::toMessage($status);
 
-	\ContestApp\Http\StatusCode::setStatusCode(
-		\ContestApp\Http\StatusCode::INTERNAL_SERVER_ERROR
-	);
-	printf("오류가 발생했습니다.<br />문의: cgh5325@kunsan.ac.kr");
+	StatusCode::setServerStatusCode($status);
+	printf("%s", $message);
 
 }

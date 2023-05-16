@@ -1,7 +1,7 @@
 <?php
 
 namespace ContestApp\Http;
-use ContestApp\Controller\{Index, Account, Contest, Assets};
+use ContestApp\Controller\{IndexController, AccountController, ContestController, AssetController};
 
 /**
  * 앱으로 들어오는 Http 요청을 라우팅
@@ -10,46 +10,32 @@ class Router {
 
 	private \Bramus\Router\Router $router;
 
-	private Array $serverParams;
-	private Array $getParams;
-	private Array $postParams;
-	private Array $cookieParams;
-	private Array $uploadFileParams;
-
 	// 요청을 제어할 모든 경로를 설정
 	private function routing(): void {
 
-		$this->router->get("/robots.txt",         [Index::class, "robots"]);
-		$this->router->get("/favicon.ico",        [Index::class, "favicon"]);
+		$this->router->get("/robots.txt",         [IndexController::class, "robots"]);
+		$this->router->get("/favicon.ico",        [IndexController::class, "favicon"]);
 
-		$this->router->get("/",                   [Index::class, "redirect"]);
-		$this->router->get("/index([^/]+)",       [Index::class, "redirect"]);
-		$this->router->get("/home",               [Index::class, "home"]);
+		$this->router->get("/",                   [IndexController::class, "redirect"]);
+		$this->router->get("/index([^/]+)",       [IndexController::class, "redirect"]);
+		$this->router->get("/home",               [IndexController::class, "viewHome"]);
 
-		$this->router->get("/assets/(.*)",        [Assets::class, "assets"]);
+		$this->router->get("/assets/(.*)",        [AssetController::class, "handleAssets"]);
 
-		$this->router->all(".*",                  [Index::class, "index"]);
+		$this->router->post("/account/signin",    [AccountController::class, "handleSignin"]);
+		$this->router->post("/account/signup",    [AccountController::class, "handleSignup"]);
+		$this->router->get("/account/signout",    [AccountController::class, "handleSignout"]);
+		$this->router->get("/account/signin",     [AccountController::class, "viewSignin"]);
+		$this->router->get("/account/signup",     [AccountController::class, "viewSignup"]);
+		$this->router->get("/account/info",       [AccountController::class, "viewAccountInfo"]);
+		$this->router->get("/account",            [AccountController::class, "redirect"]);
+
+		$this->router->all(".*",                  [IndexController::class, "index"]);
 
 	}
 
 	public function __construct() {
 		$this->router = new \Bramus\Router\Router();
-		$this->setParams([], [], [], [], []);
-	}
-
-	// 라우터에 사전정의 변수를 설정
-	public function setParams(
-		Array $serverParams     = [],
-		Array $getParams        = [],
-		Array $postParams       = [],
-		Array $cookieParams     = [],
-		Array $uploadFileParams = [],
-	): void {
-		$this->serverParams     = $serverParams;
-		$this->getParams        = $getParams;
-		$this->postParams       = $postParams;
-		$this->cookieParams     = $cookieParams;
-		$this->uploadFileParams = $uploadFileParams;
 	}
 
 	// 요청을 라우터에 할당

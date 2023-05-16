@@ -11,35 +11,40 @@ use ContestApp\System\Time;
  */
 class AssetController {
 
-	public static function assets(String $name = ""): void {
+	public static function handleAssets(String $resourcePath = ""): void {
+
+		$resourceContents = "";
 
 		try {
 
-			if (strlen($name) === 0) {                               // 요청 리소스가 정의되지 않은 경우
+			if (strlen($resourcePath) === 0) {           // 요청 리소스가 정의되지 않은 경우
 				throw new \InvalidArgumentException();
 			}
 
-			$resource = new StaticResource(sprintf("%s/%s", \APP_ASSETS_PATH, $name));
+			$resource = new StaticResource(sprintf("%s/%s", \APP_ASSETS_PATH, $resourcePath));
 			$lastModified = Time::DateRFC2822($resource->getLastModified());
 
-			StatusCode::setStatusCode(StatusCode::OK);
-			Header::setHeader(Header::CONTENT_TYPE, $resource->getMimeType()->value);
-			Header::setHeader(Header::LAST_MODIFIED, $lastModified);
-			printf("%s", $resource->getContents());
+			StatusCode::setServerStatusCode(StatusCode::OK);
+			Header::setServerHeader(Header::CONTENT_TYPE, $resource->getMimeType()->value);
+			Header::setServerHeader(Header::LAST_MODIFIED, $lastModified);
 
-		} catch (\InvalidArgumentException $e) {                    // 요청 리소스가 없는 경우
+			$resourceContents = $resource->getContents();
 
-			StatusCode::setStatusCode(StatusCode::NOT_FOUND);
-			Header::setHeader(Header::CONTENT_TYPE, MimeType::_HTML->value);
-			printf("%s", ErrorPage::NotFound());
+		} catch (\InvalidArgumentException) {          // 요청 리소스가 없는 경우
 
-		} catch (\Throwable $e) {                                   // 또는 처리중 어떤 오류가 발생한 경우
+			StatusCode::setServerStatusCode(StatusCode::NOT_FOUND);
+			Header::setServerHeader(Header::CONTENT_TYPE, MimeType::_HTML->value);
+			$resourceContents = ErrorPage::NotFound();
 
-			StatusCode::setStatusCode(StatusCode::INTERNAL_SERVER_ERROR);
-			Header::setHeader(Header::CONTENT_TYPE, MimeType::_HTML->value);
-			printf("%s", ErrorPage::InternalServerError());
+		} catch (\Throwable) {                         // 또는 처리중 오류가 발생한 경우
+
+			StatusCode::setServerStatusCode(StatusCode::INTERNAL_SERVER_ERROR);
+			Header::setServerHeader(Header::CONTENT_TYPE, MimeType::_HTML->value);
+			$resourceContents = ErrorPage::InternalServerError();
 
 		}
+
+		printf("%s", $resourceContents);
 
 	}
 
