@@ -3,6 +3,7 @@
         "bramus/router": "~1.6",
         "firebase/php-jwt": "^6.5",
         "commandstring/cookies": "^5.0",
-        "aalfiann/json-class-php": "^1.0"
+        "aalfiann/json-class-php": "^1.0",
+        "parsecsv/php-parsecsv": "^1.3"
     }
 }

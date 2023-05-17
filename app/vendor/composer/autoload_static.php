@@ -11,6 +11,10 @@ class ComposerStaticInitd87b9d001ba2dd7d435f87053e9184ce
         array (
             'aalfiann\\' => 9,
         ),
+        'P' => 
+        array (
+            'ParseCsv\\' => 9,
+        ),
         'F' => 
         array (
             'Firebase\\JWT\\' => 13,
@@ -25,6 +29,10 @@ class ComposerStaticInitd87b9d001ba2dd7d435f87053e9184ce
         'aalfiann\\' => 
         array (
             0 => __DIR__ . '/..' . '/aalfiann/json-class-php/src',
+        ),
+        'ParseCsv\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/parsecsv/php-parsecsv/src',
         ),
         'Firebase\\JWT\\' => 
         array (
