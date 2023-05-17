@@ -25,15 +25,15 @@ DROP TABLE IF EXISTS `contest`;
 CREATE TABLE `contest` (
   `code` int NOT NULL,
   `phone` char(100) NOT NULL,
-  `title` char(255) NOT NULL,
-  `field` char(50) NOT NULL,
+  `title` text NOT NULL,
+  `field` int NOT NULL,
   `headcount` int NOT NULL,
   `deadline` date NOT NULL,
   `beginningdate` date NOT NULL,
   `done` tinyint(1) NOT NULL DEFAULT '0',
-  `intramural` tinyint(1) DEFAULT '-1',
-  `rating` int DEFAULT '0',
-  `region` int DEFAULT '-1',
+  `intramural` tinyint(1) DEFAULT '0',
+  `rating` int DEFAULT '-1',
+  `region` int DEFAULT '0',
   PRIMARY KEY (`code`),
   KEY `phone` (`phone`),
   CONSTRAINT `contest_ibfk_1` FOREIGN KEY (`phone`) REFERENCES `member` (`phone`) ON DELETE CASCADE
@@ -60,12 +60,12 @@ CREATE TABLE `member` (
   `phone` char(100) NOT NULL,
   `password` char(255) NOT NULL,
   `name` char(100) NOT NULL,
-  `college` char(100) NOT NULL,
+  `college` int NOT NULL,
   `sex` int NOT NULL,
   `email` varchar(320) NOT NULL,
-  `major` char(100) NOT NULL,
+  `major` int NOT NULL,
   `birthday` date NOT NULL,
-  `rating` int NOT NULL DEFAULT '0',
+  `rating` int NOT NULL DEFAULT '-1',
   PRIMARY KEY (`phone`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
