@@ -1,7 +1,6 @@
 <?php
 
-namespace ContestApp\Session;
-
+namespace ContestApp\Security;
 use Firebase\JWT\{JWT, Key, ExpiredException};
 
 class WebToken {
@@ -45,7 +44,7 @@ class WebToken {
     try {
       $payload = JWT::decode($token, new Key(self::SECRET_KEY, "HS256"));
       $payload = (Array)$payload;
-    } catch (\Throwable $e) {
+    } catch (\Throwable) {
       return $payload;
     }
 
@@ -74,7 +73,7 @@ class WebToken {
 
     try {
       JWT::decode($token, new Key(self::SECRET_KEY, "HS256"));
-    } catch (ExpiredException $e) {
+    } catch (ExpiredException) {
       return true;
     }
 

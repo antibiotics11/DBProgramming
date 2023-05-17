@@ -25,8 +25,15 @@
     <br><br>
     <span>
         <input class="input_button" type="button" onclick="location.href='/home'" value="확인">
-        <input class="input_button" type="button" onclick="location.href='/account/signout'" value="로그아웃">
+        <input class="input_button" type="button" onclick="signout()" value="로그아웃">
     </span>
+    <script type="text/javascript">
+      function signout() {
+        if (confirm("로그아웃 하시겠습니까?")) {
+          location.href="/account/signout";
+        }
+      }
+    </script>
     <!--script>
         test();
     </script-->

@@ -15,6 +15,18 @@ use \ContestApp\ViewPage\{SigninPage, SignupPage, AccountInfoPage};
  */
 class AccountController {
 
+  public static function setAccessToken(String $accessToken): void {
+    (new Cookie)->set("AccessToken", $accessToken, 2, 0, 0, "/", \SERVICE_URL, true, true);
+  }
+
+  public static function getAccessToken(): String {
+    try {
+      return (new Cookie)->get("AccessToken");
+    } catch (\Exception) {
+      return "";
+    }
+  }
+
   // 이미 로그인한 사용자인지 확인한다.
   public static function signedIn(): bool {
 
@@ -28,11 +40,8 @@ class AccountController {
 
   // 유효한 액세스 토큰에 저장된 정보를 가져온다.
   public static function parseAccessToken(): Array {
-    try {
-      $accessToken = (new Cookie)->get("AccessToken");
-    } catch (\Exception) {                     // 토큰이 없으면
-      return [];
-    }
+
+    $accessToken = self::getAccessToken();
     if (strlen($accessToken) < 100) {          // 토큰이 없으면
       return [];
     }
@@ -108,7 +117,7 @@ class AccountController {
   }
 
   // 계정정보 조회
-  public static function viewInfo(): void {
+  public static function viewAccountInfo(): void {
 
     if (!self::signedIn()) {   // 로그인하지 않은 사용자면
       self::redirect();
@@ -137,11 +146,15 @@ class AccountController {
 
     if (count(AccountModel::getUserInfoByPhone($params["phone"])) == 0) {
       $result = 3;
-    } else {              // 일치하는 계정 없음
-      $result = (AccountModel::passwordMatches($phone, $password)) ? 1 : 2;
+    } else {
+      $result = 2;
+      if (AccountModel::passwordMatches($phone, $password)) {
+        self::setAccessToken(WebToken::create([ "phone" => $phone ]));
+        $result = 1;
+      }
     }
 
-    $encoded = (new JSON)->encode([ "result" => $result ]);
+    $encoded = (new JSON)->encode([ "status" => $result ]);
 
     Header::setServerHeader(Header::CONTENT_TYPE, MimeType::_JSON->value);
     printf("%s", $encoded);
@@ -176,7 +189,7 @@ class AccountController {
       }
     }
 
-    $encoded = (new JSON)->encode([ "result" => $result ]);
+    $encoded = (new JSON)->encode([ "status" => $result ]);
 
     Header::setServerHeader(Header::CONTENT_TYPE, MimeType::_JSON->value);
     printf("%s", $encoded);
@@ -190,16 +203,11 @@ class AccountController {
       return;
     }
 
-    $cookieManager = new Cookie;
-
-    $accessToken = $cookieManager->get("AccessToken");
-    $accessToken = WebToken::expire($accessToken);
-
-    $cookieManager->set("AccessToken", $accessToken);
+    $accessToken = WebToken::expire(self::getAccessToken());
+    self::setAccessToken($accessToken);
 
     self::redirect();
 
   }
-
 
 };

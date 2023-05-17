@@ -6,6 +6,7 @@
 
 const SERVICE_NAME             = "공모전 팀원 모집";
 const SERVICE_DESCRIPTION      = "대학생 공모전, 해커톤, 대회 팀원 모집";
+const SERVICE_URL              = "contest.abx.pe.kr";
 
 const APP_VIEW_PATH            = __DIR__ . "/html";              // 앱이 참고할 html 뷰 파일 경로
 const APP_ASSETS_PATH          = __DIR__ . "/assets";            // 앱이 참고할 정적 리소스 경로

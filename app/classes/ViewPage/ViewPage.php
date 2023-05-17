@@ -45,6 +45,10 @@ class Viewpage {
 		$page->pushHead(sprintf("<title>%s</title>", \SERVICE_NAME));
 		$page->pushHead(sprintf("<meta name=\"title\" content=\"%s\">", \SERVICE_NAME));
 		$page->pushHead(sprintf("<meta name=\"description\" content=\"%s\">", \SERVICE_DESCRIPTION));
+		$page->pushHead(sprintf("<meta property=\"og:title\" content=\"%s\">", \SERVICE_NAME));
+		$page->pushHead(sprintf("<meta property=\"og:description\" content=\"%s\">", \SERVICE_DESCRIPTION));
+		$page->pushHead(sprintf("<meta property=\"og:url\" content=\"https://%s\">", \SERVICE_URL));
+		$page->pushHead("<meta property=\"og:type\" content=\"website\">");
 		$page->pushHead("<link rel=\"stylesheet\" href=\"/assets/style.css\">");
 		$page->pushHead("<link rel=\"shortcut icon\" href=\"/assets/image/favicon.ico\">");
 
