@@ -1,8 +1,20 @@
 <div id="grid1">
   <div id="logo">
     <img id="logo1" src="/assets/image/logo3.png" alt="로고" >
-    <button type="button" onclick="location.href='/account/signin'">로그인</button>
+    <button id="top_menu" type="button" onclick="location.href='/account/signin'">로그인</button>
   </div>
+  <script type="text/javascript">
+    let phone = getCookieByName("phone");
+    let signedIn = (typeof(phone) != "undefined" && phone.length > 1);
+
+    let elementTopMenu = document.getElementById("top_menu");
+
+    if (signedIn) {
+      elementTopMenu.innerHTML = "계정정보";
+    } else {
+      elementTopMenu.innerHTML = "로그인";
+    }
+  </script>
   <div id="grid2">
     <div class="blank"></div>
     <div>%s</div>

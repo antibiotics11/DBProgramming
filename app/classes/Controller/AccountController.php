@@ -150,6 +150,7 @@ class AccountController {
       $result = 2;
       if (AccountModel::passwordMatches($phone, $password)) {
         self::setAccessToken(WebToken::create([ "phone" => $phone ]));
+        (new Cookie)->set("phone", $phone);
         $result = 1;
       }
     }
@@ -205,6 +206,7 @@ class AccountController {
 
     $accessToken = WebToken::expire(self::getAccessToken());
     self::setAccessToken($accessToken);
+    (new Cookie)->set("phone", "");
 
     self::redirect();
 

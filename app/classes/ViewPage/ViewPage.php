@@ -51,6 +51,7 @@ class Viewpage {
 		$page->pushHead("<meta property=\"og:type\" content=\"website\">");
 		$page->pushHead("<link rel=\"stylesheet\" href=\"/assets/style.css\">");
 		$page->pushHead("<link rel=\"shortcut icon\" href=\"/assets/image/favicon.ico\">");
+		$page->pushHead("<script type=\"text/javascript\" src=\"/assets/script/util.js\"></script>");
 
 		$page->setBody(sprintf(self::read(self::VIEW_MAIN_PATH), $container));
 
