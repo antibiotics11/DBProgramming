@@ -1,0 +1,85 @@
+<!--공모전 정보 등록 화면-->
+<!--link rel="stylesheet" href="style.css"-->
+<div id="add_contest">
+    <h1>공모전 등록하기</h1>
+    <ul class="formlist">
+        <!---->
+        <input type="text" id="code" hidden>
+        <input type="text" id="phone" hidden>
+        <input type="text" id="rating" hidden>
+        <li class="formli">
+            <span>
+                공모전 제목
+            </span>
+            <span class="forminput">
+                <input class="input_sign" type="text" id="title">
+            </span>
+        </li>
+        <br>
+        <li class="formli">
+            <span>
+                분야
+            </span>
+            <span class="forminput">
+                <input class="input_sign" type="text" id="field">
+            </span>            
+        </li>
+        <br>
+        <li class="formli">
+            <span>
+                인원수
+            </span>
+            <span class="forminput">
+                <input class="input_sign" type="text" id="headcount">
+            </span>       
+        </li>
+        <br>
+        <li class="formli">
+            <span>
+                시작일
+            </span>
+            <span class="forminput">
+                <input class="input_sign" type="text" id="beginningdate" placeholder="YYYYMMDD">
+            </span>            
+        </li>
+        <br>
+        <li class="formli">
+            <span>
+                마감일
+            </span>
+            <span class="forminput">
+                <input class="input_sign" type="text" id="deadline" placeholder="YYYYMMDD">
+            </span>    
+        </li>   
+        <br>
+        <li class="formli">
+            <span>
+                모집완료
+            </span>
+            <span class="forminput">
+                <input class="input_sign" style="width:50px;" type="radio" name="done" value="1">O
+                <input class="input_sign" style="width:50px;" type="radio" name="done"  value="0" checked>X
+            </span>
+        </li>   
+        <br>
+        <li class="formli">
+            <span>
+                교내대회
+            </span>
+            <span class="forminput">
+                <input class="input_sign" style="width:50px;" type="radio" name="intramural" value="1" checked>교내
+                <input class="input_sign" style="width:50px;" type="radio" name="intramural"  value="0">교외
+            </span>    
+        </li>  
+        <br>
+        <li class="formli">
+            <span>
+                지역
+            </span>
+            <span class="forminput">
+                <input class="input_sign" type="text" id="region">
+            </span>
+        </li>   
+    </ul>
+    <input class="input_button" type="button" onclick="" value="완료">
+</div>
