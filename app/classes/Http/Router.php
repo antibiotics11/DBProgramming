@@ -32,7 +32,7 @@ class Router {
 
 		$this->router->post("/contest/create",    [ContestController::class, "handleCreate"]);        // 공모전 등록 요청 처리
 		$this->router->post("/contest/update",    [ContestController::class, "handleUpdate"]);        // 공모전 수정 요청 처리
-		$this->router->post("/contest/delete",    [ContestController::class, "handleDelete"])         // 공모전 삭제 요청 처리
+		$this->router->post("/contest/delete",    [ContestController::class, "handleDelete"]);        // 공모전 삭제 요청 처리
 		$this->router->get("/contest/create",     [ContestController::class, "viewCreate"]);          // 공모전 등록 페이지 조회
 		$this->router->get("/contest/u/{code}",   [ContestController::class, "viewUpdate"]);          // 공모전 수정 페이지 조회
 		$this->router->get("/contest/u",          [ContestController::class, "redirectToList"]);      // 리디렉션
