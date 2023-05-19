@@ -72,8 +72,8 @@ class CsvDataLoader {
 
     $regions = [];
     for ($r = 0; $r < count($csvData); $r++) {
-      $regions[$r]["name"] = (String)$csvData["지역"];
-      $regions[$r]["code"] = (int)$csvData["코드"];
+      $regions[$r]["name"] = (String)$csvData[$r]["지역"];
+      $regions[$r]["code"] = (int)$csvData[$r]["코드"];
     }
 
     return $regions;
