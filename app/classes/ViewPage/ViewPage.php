@@ -30,6 +30,36 @@ class Viewpage {
 
 	}
 
+	public static function loadSelectedOption(int $optionCode, Array $optionsList): String {
+
+		$optionName = "";
+		for ($o = 0; $o < count($optionsList); $o++) {
+			if ((int)$optionsList[$o]["code"] == $optionCode) {
+				return $optionsList[$o]["name"];
+			}
+		}
+
+		return $optionName;
+
+	}
+
+	public static function loadSelectOptions(Array $optionsList): String {
+
+		$options = "";
+		for ($o = 0; $o < count($optionsList); $o++) {
+
+			$optionCode = (int)$optionsList[$o]["code"];
+			$optionName = (String)$optionsList[$o]["name"];
+
+			$option = sprintf("<option value=\"%d\">%s</option>", $optionCode, $optionName);
+			$options = sprintf("%s\r\n%s", $options, $option);
+
+		}
+
+		return $options;
+
+	}
+
 	/**
 	 * html 페이지를 조립하여 반환한다.
 	 *
