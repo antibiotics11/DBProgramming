@@ -29,11 +29,19 @@ class IndexController {
 		printf("User-Agent: *\r\nDisallow: /\r\n");
 	}
 
-	// 홈 페이지 응답*/
+	// 홈 페이지 응답
 	public static function viewHome(): void {
+
+		// 로그인했으면 공모전 목록, 로그인하지 않았으면 로그인 페이지로 리디렉션
+		$location = AccountController::signedIn() ? "/contest/list" : "/account/signin";
+		StatusCode::setServerStatusCode(StatusCode::MOVED_TEMPORARILY);
+		Header::setServerHeader(Header::LOCATION, $location);
+
+		/*
 		StatusCode::setServerStatusCode(StatusCode::OK);
 		Header::setServerHeader(Header::CONTENT_TYPE, MimeType::_HTML->value);
 		printf("%s", HomePage::page());
+		*/
 	}
 
 	// 라우터에 정의되지 않은 경로로 요청 발생시 Bad Request 응답
