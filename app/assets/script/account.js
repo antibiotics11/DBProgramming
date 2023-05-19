@@ -5,7 +5,7 @@ function signin(phone, password) {
 		return;
 	}
 	if (!verifyPassword(password)) {
-		alert("패스워드를 정확하게 입력해주세요.");
+		alert("패스워드는 4자리 이상 입력해주세요.");
 		return;
 	}
 
@@ -37,7 +37,7 @@ function signup(phone, password, name, college, sex, email, major, birthday) {
 		return;
 	}
 	if (!verifyPassword(password)) {
-		alert("패스워드를 정확하게 입력해주세요.");
+		alert("패스워드는 4자리 이상 입력해주세요.");
 		return;
 	}
 
@@ -77,12 +77,17 @@ function signout() {
 	}
 }
 
-// 휴대폰 번호의 유효성을 검증
+// 휴대폰 번호에서 숫자가 아닌것을 모두 제거
+function trimPhone(phone) {
+	return phone.replace(/\D/g, "");
+}
+
+// 휴대폰 번호가 11자리 숫자인지 확인 (01000000000 형식)
 function verifyPhone(phone) {
-	return true;
+	return (trimPhone(phone).length == 11);
 }
 
 // 패스워드의 유효성을 검증
 function verifyPassword(password) {
-	return true;
+	return (password.length >= 4);
 }
