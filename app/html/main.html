@@ -1,20 +1,25 @@
 <div id="grid1">
   <div id="logo">
     <img id="logo1" src="/assets/image/logo3.png" alt="로고" >
-    <button id="top_menu" type="button" onclick="location.href='/account/signin'">로그인</button>
-    <button type="button">공모전 등록</button>
+    <button id="top_menu_post" type="button" onclick="location.href='/contest/create'">공모전 등록</button>
+    <button id="top_menu_account" type="button" onclick="location.href='/account/signin'">로그인</button>
   </div>
   <script type="text/javascript">
+
     let phone = getCookieByName("phone");
     let signedIn = (typeof(phone) != "undefined" && phone.length > 1);
 
-    let elementTopMenu = document.getElementById("top_menu");
+    let elementTopMenuAccount = document.getElementById("top_menu_account");
+    let elementTopMenuPost = document.getElementById("top_menu_post");
 
-    if (signedIn) {
-      elementTopMenu.innerHTML = "계정정보";
-    } else {
-      elementTopMenu.innerHTML = "로그인";
+    if (signedIn) {  // 로그인한 상태면
+      elementTopMenuAccount.innerHTML = "계정정보";
+      elementTopMenuPost.style.display = "block";   // 등록 버튼 출력
+    } else {         // 로그인하지 않은 상태면
+      elementTopMenuAccount.innerHTML = "로그인";
+      elementTopMenuPost.style.display = "none";    // 등록 버튼 가리기
     }
+
   </script>
   <div id="grid2">
     <div class="blank"></div>
@@ -23,7 +28,9 @@
   </div>
   <div id="footer">
     <br>
-    <a class="footer_a" href="">개인정보 처리 방침</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a class="footer_a" href="">이용약관</a>
+    <a class="footer_a" href="/assets/privcay_policy.htm">개인정보 처리 방침</a>
+    &nbsp;&nbsp;|&nbsp;&nbsp;
+    <a class="footer_a" href="/assets/term_of_use.htm">이용약관</a>
     <br><br>
     ⓒ KunsanDBProject
   </div>
