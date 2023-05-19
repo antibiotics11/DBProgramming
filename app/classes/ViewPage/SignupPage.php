@@ -1,7 +1,6 @@
 <?php
 
 namespace ContestApp\ViewPage;
-use \ParseCSV\CSV;
 
 class SignupPage {
 
