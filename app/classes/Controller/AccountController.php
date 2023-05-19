@@ -4,10 +4,11 @@ namespace ContestApp\Controller;
 
 use \CommandString\Cookies\Cookie;
 use \aalfiann\JSON;
+
 use \ContestApp\Http\{Header, StatusCode};
-use \ContestApp\Resource\MimeType;
+use \ContestApp\Resource\{MimeType, CsvDataLoader};
 use \ContestApp\Security\WebToken;
-use \ContestApp\Model\AccountModel;
+use \ContestApp\Model\{AccountAttribute, AccountModel};
 use \ContestApp\ViewPage\{SigninPage, SignupPage, AccountInfoPage};
 
 /**
@@ -15,10 +16,12 @@ use \ContestApp\ViewPage\{SigninPage, SignupPage, AccountInfoPage};
  */
 class AccountController {
 
+  // AccessToken 쿠키를 설정한다.
   public static function setAccessToken(String $accessToken): void {
     (new Cookie)->set("AccessToken", $accessToken, 2, 0, 0, "/", \SERVICE_URL, true, true);
   }
 
+  // AccessToken 쿠키 값을 반환하고, 쿠키가 없으면 빈 문자열을 반환한다.
   public static function getAccessToken(): String {
     try {
       return (new Cookie)->get("AccessToken");
@@ -34,7 +37,8 @@ class AccountController {
     if (count($tokenValues) == 0) {
       return false;
     }
-    return isset($tokenValues["phone"]);
+
+    return isset($tokenValues[AccountAttribute::Phone->value]);
 
   }
 
@@ -53,36 +57,23 @@ class AccountController {
 
   }
 
-  // POST된 파라미터 중 AccountController에서 관리할 값들을 가져온다.
+  // POST된 파라미터 중 AccountController에서 관리할 속성 값들을 정리해서 가져온다.
   public static function parsePostedParams(): Array {
 
+    $decoded = [];
     foreach ($_POST as $name => $value) {
-      $_POST[$name] = base64_decode($value);
+      $decoded[strtolower(trim($name))] = urldecode($value);
+    }
+    foreach (AccountAttribute::cases() as $attribute) {
+      $attribute = $attribute->value;
+      $decoded[$attribute] = AccountAttribute::trimValue($attribute, $decoded[$attribute] ?? "");
     }
 
-    $phone    = $_POST["phone"] ?? "";
-    $password = $_POST["password"] ?? "";
-    $name     = $_POST["name"] ?? "";
-    $college  = $_POST["college"] ?? "";
-    $sex      = $_POST["sex"] ?? "0";
-    $email    = $_POST["email"] ?? "";
-    $major    = $_POST["major"] ?? "";
-    $birthday = $_POST["birthday"] ?? "2000-01-01";
-
-    return [
-      "phone"    => (String)trim($phone),
-      "password" => (String)trim($password),
-      "name"     => (String)trim($name),
-      "college"  => (String)trim($college),
-      "sex"      => (bool)trim($sex),
-      "email"    => (String)trim($email),
-      "major"    => (String)trim($major),
-      "birthday" => (String)trim($birthday)
-    ];
+    return $decoded;
 
   }
 
-  // 로그인 여부에 따라 리디렉션
+  // 로그인한 상태면 계정정보 페이지, 로그인하지 않았으면 로그인 페이지로 리디렉션
   public static function redirect(): void {
 
     $location = self::signedIn() ? "/account/info" : "/account/signin";
@@ -92,11 +83,11 @@ class AccountController {
 
   }
 
-  // 로그인 페이지 조회
+  // 로그인 페이지 출력
   public static function viewSignin(): void {
 
     if (self::signedIn()) {    // 로그인한 사용자면 리디렉션
-      self::redirect();
+      self::redirect(); return;
     }
 
     Header::setServerHeader(Header::CONTENT_TYPE, MimeType::_HTML->value);
@@ -104,61 +95,68 @@ class AccountController {
 
   }
 
-  // 회원가입 페이지 조회
+  // 회원가입 페이지 출력
   public static function viewSignup(): void {
 
     if (self::signedIn()) {    // 로그인한 사용자면 리디렉션
-      self::redirect();
+      self::redirect(); return;
     }
 
     Header::setServerHeader(Header::CONTENT_TYPE, MimeType::_HTML->value);
-    printf("%s", SignupPage::page());
+
+    $collegesList = CsvDataLoader::loadCollegesList();
+    $majorsList = CsvDataLoader::loadMajorsList();
+    printf("%s", SignupPage::page($collegesList, $majorsList));
 
   }
 
-  // 계정정보 조회
+  // 계정정보 출력
   public static function viewAccountInfo(): void {
 
-    if (!self::signedIn()) {   // 로그인하지 않은 사용자면
-      self::redirect();
+    if (!self::signedIn()) {   // 로그인하지 않은 사용자면 리디렉션
+      self::redirect(); return;
     }
 
-    $phone = self::parseAccessToken()["phone"];
-    $accountInfo = AccountModel::getUserInfoByPhone($phone);
-
     Header::setServerHeader(Header::CONTENT_TYPE, MimeType::_HTML->value);
-    printf("%s", AccountInfoPage::page($accountInfo));
+
+    $phone = self::parseAccessToken()[AccountAttribute::Phone->value];
+    $accountInfo = AccountModel::getUserInfoByPhone($phone);   // 계정정보를 받아온다
+
+    $collegesList = CsvDataLoader::loadCollegesList();
+    $majorsList = CsvDataLoader::loadMajorsList();
+
+    printf("%s", AccountInfoPage::page($accountInfo, $collegesList, $majorsList));
 
   }
 
   // 로그인 요청 처리
   public static function handleSignin(): void {
 
-    if (self::signedIn()) {    // 로그인한 사용자면
+    if (self::signedIn()) {    // 로그인한 사용자면 Bad Request 응답
       StatusCode::setServerStatusCode(StatusCode::BAD_REQUEST);
       return;
     }
 
-    $result   = -1;
     $params   = self::parsePostedParams();
-    $phone    = $params["phone"];
-    $password = $params["password"];
+    $phone    = $params[AccountAttribute::Phone->value];
+    $password = $params[AccountAttribute::Password->value];
 
-    if (count(AccountModel::getUserInfoByPhone($params["phone"])) == 0) {
-      $result = 3;
+    $result   = -1;
+    if (!count(AccountModel::getUserInfoByPhone($phone))) {
+      $result = 3;        // 휴대폰 번호와 일치하는 계정이 없으면 3
     } else {
-      $result = 2;
+      $result = 2;        // 패스워드가 일치하지 않으면 2
       if (AccountModel::passwordMatches($phone, $password)) {
-        self::setAccessToken(WebToken::create([ "phone" => $phone ]));
-        (new Cookie)->set("phone", $phone);
-        $result = 1;
+
+        self::setAccessToken(WebToken::create([ AccountAttribute::Phone->value => $phone ]));
+        (new Cookie)->set(AccountAttribute::Phone->value, $phone);   // AccessToken 쿠키를 생성
+        $result = 1;      // 패스워드가 일치하면 1 (로그인 성공)
+
       }
     }
 
-    $encoded = (new JSON)->encode([ "status" => $result ]);
-
     Header::setServerHeader(Header::CONTENT_TYPE, MimeType::_JSON->value);
-    printf("%s", $encoded);
+    printf("%s", (new JSON)->encode([ "status" => $result ]));
 
   }
 
@@ -171,29 +169,32 @@ class AccountController {
     }
 
     $result = -1;
-    $params = self::parsePostedParams();
 
-    foreach ($params as $value) {
-      if (strcmp(gettype($value), "string") !== 0) {
-        continue;
+    $params = self::parsePostedParams();
+    $params[AccountAttribute::Rating->value] = -1;
+    foreach (AccountAttribute::cases() as $attribute) {
+      $paramValue = $params[$attribute->value];
+      if (strcmp(gettype($paramValue), "string") !== 0) {
+        continue;        // 타입이 문자열이 아닌 속성 값은 일단 패스
       }
-      if (strlen($value) == 0) {
-        $result = 3;
+      if (strlen($paramValue) < 2) {
+        $result = 3;     // 비어있는 속성 값이 하나라도 있으면
+        break;
       }
     }
 
     if ($result != 3) {
-      if (count(AccountModel::getUserInfoByPhone($params["phone"])) != 0) {
-        $result = 2;
+      $phone = $params[AccountAttribute::Phone->value];
+      if (count(AccountModel::getUserInfoByPhone($phone)) != 0) {
+        $result = 2;     // 이미 같은 휴대폰 번호를 쓰는 계정이 있으면
       } else {
+        // DB에 insert 성공했으면 1, 실패했으면 4
         $result = (AccountModel::createNewAccount($params)) ? 1 : 4;
       }
     }
 
-    $encoded = (new JSON)->encode([ "status" => $result ]);
-
     Header::setServerHeader(Header::CONTENT_TYPE, MimeType::_JSON->value);
-    printf("%s", $encoded);
+    printf("%s", (new JSON)->encode([ "status" => $result ]));
 
   }
 
@@ -201,14 +202,15 @@ class AccountController {
   public static function handleSignout(): void {
 
     if (!self::signedIn()) {   // 로그인하지 않은 사용자면
+      StatusCode::setServerStatusCode(StatusCode::BAD_REQUEST);
       return;
     }
 
     $accessToken = WebToken::expire(self::getAccessToken());
-    self::setAccessToken($accessToken);
-    (new Cookie)->set("phone", "");
+    self::setAccessToken($accessToken);                      // AccessToken을 만료시킨다
+    (new Cookie)->set(AccountAttribute::Phone->value, "");   // phone 쿠키를 제거한다
 
-    self::redirect();
+    self::redirect();  // 리디렉션
 
   }
 
