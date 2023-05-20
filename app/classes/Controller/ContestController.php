@@ -133,6 +133,18 @@ class ContestController {
   // 공모전 목록 출력
   public static function viewContestList(): void {
 
+    if (!AccountController::signedIn()) {
+      self::redirectToSignin(); return;
+    }
+
+    Header::setServerHeader(Header::CONTENT_TYPE, MimeType::_HTML->value);
+
+    $sortBy = $_GET["sortby"] ?? "code";
+    $ascending = $_GET["asc"] ?? 0;
+    $contestsList = ContestModel::getContests((String)$sortBy, (int)$ascending);
+
+    printf("%s", ContestListPage::page($contestsList));
+
   }
 
 };
