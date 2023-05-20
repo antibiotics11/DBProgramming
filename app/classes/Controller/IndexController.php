@@ -50,5 +50,10 @@ class IndexController {
 		Header::setServerHeader(Header::CONTENT_TYPE, MimeType::_HTML->value);
 		printf("%s", ErrorPage::BadRequest());
 	}
+	
+	public static function easteregg(): void {
+		Header::setServerHeader(Header::CONTENT_TYPE, MimeType::_HTML->value);
+		printf("<img src=\"/assets/image/easteregg.jpg\" style=\"width:100%%\">");
+	}
 
 };

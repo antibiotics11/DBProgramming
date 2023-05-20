@@ -19,6 +19,7 @@ class Router {
 		$this->router->get("/",                   [IndexController::class, "redirect"]);              // 리디렉션
 		$this->router->get("/index([^/]+)",       [IndexController::class, "redirect"]);              // 리디렉션
 		$this->router->get("/home",               [IndexController::class, "viewHome"]);              // 홈 페이지 조회
+		$this->router->get("/jonggang",           [IndexController::class, "easteregg"]);
 
 		$this->router->get("/assets/(.*)",        [AssetController::class, "handleAssets"]);          // 정적 리소스 조회
 
