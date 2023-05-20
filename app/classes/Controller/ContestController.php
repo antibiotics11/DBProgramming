@@ -7,6 +7,7 @@ use \ContestApp\Http\{Header, StatusCode};
 use \ContestApp\Resource\{MimeType, CsvDataLoader};
 use \ContestApp\Model\{ContestAttribute, ContestModel};
 use \ContestApp\ViewPage\{ContestListPage, ContestCreatePage, ContestInfoPage};
+use \ContestApp\System\Time;
 
 /**
  * 공모전 관련 요청 컨트롤러
@@ -66,15 +67,31 @@ class ContestController {
       return;
     }
 
+    $result = -1;
     $params = self::parsePostedParams();
-    /**
-     *
-     *
-     *    등록 로직 구현할 차례
-     *
-     *
-     *
-     */
+
+    $phone = AccountController::parseAccessToken()[ContestAttribute::Phone->value];
+    $beginningdate = Time::DateYMD("-", $params[ContestAttribute::Beginningdate->value]);
+    $deadline = Time::DateYMD("-", $params[ContestAttribute::Deadline->value]);
+
+    $params[ContestAttribute::Phone->value]         = $phone;
+    $params[ContestAttribute::Beginningdate->value] = $beginningdate;
+    $params[ContestAttribute::Deadline->value]      = $deadline;
+    $params[ContestAttribute::Intramural->value]    =
+      $params[ContestAttribute::Intramural->value] ? 1 : 0;
+
+    $latestCode = ContestModel::getLatestContestCode();
+    if ($latestCode == -1) {
+      $result = 3;
+    }
+    $params[ContestAttribute::Code->value] = $latestCode + 1;
+
+    if ($result != 3) {
+      $result = ContestModel::createContest($params) ? 1 : 3;
+    }
+
+    Header::setServerHeader(Header::CONTENT_TYPE, MimeType::_JSON->value);
+    printf("%s", (new JSON)->encode([ "status" => $result, "code" => $latestCode + 1 ]));
 
   }
 
