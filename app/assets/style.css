@@ -1,42 +1,50 @@
+/**
+ * 애플리케이션에 적용되는 메인 스타일시트
+ * 최종 수정 시점: 2023-05-20
+ */
+
+/* 공통 영역 */
+
 body{
-	margin: 0px;
+		margin: 0px;
 }
-
 div{
-	text-align: center;
+		text-align: center;
 }
-
 #grid1{
-	display: grid;
-	grid-template-rows: 1fr 5fr 1fr;
-}
+		display: grid;
+		grid-template-rows: 1fr 5fr 1fr;
 
+}
 #grid2{
-	display: grid;
-	grid-template-columns:1fr 5fr 1fr;
-}
+		display: grid;
+		grid-template-columns:1fr 5fr 1fr;
 
+}
+#main_container {
+	margin-right: auto;
+	margin-left: auto;
+	margin-top: 10%;
+}
 #footer{
-	color:white;
-	background-color: rgb(62, 69, 61);
+		color:white;
+		background-color: rgb(62, 69, 61);
 }
-
 .footer_a{
-	color: white;
+		color: white;
 }
-
 #logo{
-	border-bottom:black 2px solid;
-	text-align: left;
+		border-bottom:black 2px solid;
+		text-align: left;
 }
-
 #logo1{
-	height: 200px;
+		height: 200px;
+}
+.blank{
+		background-color: rgb(239, 239, 239);;
 }
 
-.blank{
-	background-color: rgb(239, 239, 239);;
-}
+/* html/style_ver0518 */
 
 .sign{
     border:2px solid rgb(51, 219, 149);
