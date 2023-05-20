@@ -1,8 +1,11 @@
 <div id="grid1">
   <div id="logo">
-    <img id="logo1" src="/assets/image/logo3.png" alt="로고" >
-    <button id="top_menu_post" type="button" onclick="location.href='/contest/create'">공모전 등록</button>
-    <button id="top_menu_account" type="button" onclick="location.href='/account/signin'">로그인</button>
+    <img id="logo1" src="/assets/image/logo3_cropped.png" onclick="location.reload()" alt="로고" >
+    <div id="top_menu">
+      <input type="button" class="top_menu_btn_2" id="top_menu_account" onclick="location.href='/account/signin'" value="내 계정정보">
+      <input type="button" class="top_menu_btn_1" id="top_menu_my" onclick="location.href='/contest/my'" value="내 공모전">
+      <input type="button" class="top_menu_btn_1" id="top_menu_post" onclick="location.href='/contest/create'" value="공모전 등록">
+      </div>
   </div>
   <script type="text/javascript">
 
@@ -10,13 +13,16 @@
     let signedIn = (typeof(phone) != "undefined" && phone.length > 1);
 
     let elementTopMenuAccount = document.getElementById("top_menu_account");
+    let elementTopMenuMy = document.getElementById("top_menu_my");
     let elementTopMenuPost = document.getElementById("top_menu_post");
 
     if (signedIn) {  // 로그인한 상태면
-      elementTopMenuAccount.innerHTML = "계정정보";
+      elementTopMenuAccount.value = "내 계정정보";
+      elementTopMenuMy.style.display = "block";
       elementTopMenuPost.style.display = "block";   // 등록 버튼 출력
     } else {         // 로그인하지 않은 상태면
-      elementTopMenuAccount.innerHTML = "로그인";
+      elementTopMenuAccount.value = "로그인";
+      elementTopMenuMy.style.display = "none";
       elementTopMenuPost.style.display = "none";    // 등록 버튼 가리기
     }
 

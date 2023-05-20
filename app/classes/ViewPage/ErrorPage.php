@@ -14,8 +14,7 @@ class ErrorPage {
    * @return String 생성된 Container
    */
   public static function loadContainer(int $code, String $message, String $details = ""): String {
-    return sprintf("<div id = \"container\">%s\r\n%s</div>",
-      "<link rel=\"stylesheet\" href=\"/assets/error_style.css\">",
+    return sprintf("<div id = \"container\">%s</div>",
       sprintf("<div id = \"status\">%s<br /><br />%s</div>",
         sprintf("<div id = \"status-message\">%d %s</div>", $code, $message),
         sprintf("<div id = \"status-details\">%s</div>", $details)
