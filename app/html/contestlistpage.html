@@ -1,0 +1,27 @@
+<!-- 공모전 전체 목록 페이지 -->
+<div id="list_container">
+  <div id="list_menu">
+    <input type="text" id="list_search" placeholder="제목으로 검색...">
+    <select id="list_sort_orderby">
+      <option value="code" selected>코드 기준</option>
+      <option value="title">제목 기준</option>
+      <option value="beginningdate">모집시작일 기준</option>
+      <option value="deadline">모집종료일 기준</option>
+    </select>
+    <select id="list_sort_ascending">
+      <option value="1" selected>오름차순</option>
+      <option value="0">내림차순</option>
+    </select>
+    <input type="button" id="list_sort_submit" onclick="sortList()" value="보기">
+    <br>
+    <script type="text/javascript">
+      function sortList() {
+        let sortBy = document.getElementById("list_sort_orderby").value;
+        let ascending = document.getElementById("list_sort_ascending").value;
+        let page = window.location + "?sortby=" + sortBy + "&asc=" + ascending;
+        location.href = page;
+      }
+    </script>
+  </div>
+  <div id="list_scroll">%s</div>
+</div>
