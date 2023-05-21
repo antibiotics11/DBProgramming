@@ -1,6 +1,7 @@
 <?php
 
 namespace ContestApp\ViewPage;
+use \ContestApp\Model\ContestAttribute;
 
 class ContestListPage {
 
@@ -16,18 +17,18 @@ class ContestListPage {
     for ($c = 0; $c < count($contestsList); $c++) {
 
       $contestInfo = sprintf(ViewPage::read(self::VIEW_CONTEST_LIST_FORM_PATH),
-        $contestsList[$c]["code"],
-        $contestsList[$c]["title"],
-        $majors[(int)$contestsList[$c]["field"]],
-        $contestsList[$c]["beginningdate"],
-        $contestsList[$c]["deadline"],
-        $contestsList[$c]["rating"],
-        ($contestsList[$c]["done"] ? "모집완료" : "모집중")
+        $contestsList[$c][ContestAttribute::Code->value],
+        $contestsList[$c][ContestAttribute::Title->value],
+        $majors[(int)$contestsList[$c][ContestAttribute::Field->value]],
+        $contestsList[$c][ContestAttribute::Beginningdate->value],
+        $contestsList[$c][ContestAttribute::Deadline->value],
+        $contestsList[$c][ContestAttribute::Rating->value],
+        ($contestsList[$c][ContestAttribute::Done->value] ? "모집완료" : "모집중")
       );
       $list = sprintf("%s\r\n%s", $list, $contestInfo);
     }
     if (strlen($list) == 0) {
-      $list = "<div>해당하는 정보가 없습니다.</div>"
+      $list = "<div>해당하는 정보가 없습니다.</div>";
     }
 
     return $list;
