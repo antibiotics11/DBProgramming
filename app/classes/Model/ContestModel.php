@@ -8,9 +8,25 @@ use \ContestApp\Database\PdoConnector;
  */
 class ContestModel {
 
-  private const COLUMN_NAME_CONTEST     = "contest";
-  private const SQL_SELECT_CONTEST      = "SELECT * FROM " . self::COLUMN_NAME_CONTEST;
-  private const SQL_SELECT_CONTEST_SORT = self::SQL_SELECT_CONTEST . " ORDER BY %s %s";
+  private const COLUMN_NAME_CONTEST  = "contest";
+  private const SQL_SELECT_CONTEST   = "SELECT * FROM " . self::COLUMN_NAME_CONTEST;
+
+  public static function getSelectQuery(Array $filters = [], String $sortBy = "code", bool $ascending = false): String {
+
+    $where = "1=1";
+    foreach ($filters as $columnName => $columnValue) {
+      $where = sprintf("%s AND %s='%s'", $where, $columnName, $columnValue);
+    }
+
+    $query = sprintf("%s WHERE %s ORDER BY %s %s",
+      self::SQL_SELECT_CONTEST,
+      $where,
+      $sortBy,
+      ($ascending) ? "ASC" : "DESC"
+    );
+
+    return $query;
+  }
 
   /**
    * 전체 공모전 목록을 가져온다.
@@ -19,15 +35,12 @@ class ContestModel {
    * @param bool $ascending 오름차순/내림차순
    * @return Array 공모전 목록, 또는 오류 발생한 경우 빈 배열
    */
-  public static function getContests(String $sortBy = "code", bool $ascending = false): Array {
-
-    $rank = ($ascending) ? "ASC" : "DESC";
-    $query = sprintf(self::SQL_SELECT_CONTEST_SORT, $sortBy, $rank);
+  public static function getContests(Array $filters = [], String $sortBy = "code", bool $ascending = false): Array {
 
     $pdo = new PdoConnector(\MYSQL_HOSTNAME, \MYSQL_DBNAME, \MYSQL_USERNAME, \MYSQL_PASSWORD);
     $result = [];
     try {
-      $stmt = $pdo->pdo->prepare($query);
+      $stmt = $pdo->pdo->prepare(self::getSelectQuery($filters, $sortBy, $ascending));
       $stmt->execute();
       $result = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?? [];
     } catch (\PDOException $e) {

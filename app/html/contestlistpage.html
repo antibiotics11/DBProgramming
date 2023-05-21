@@ -1,7 +1,40 @@
 <!-- 공모전 전체 목록 페이지 -->
 <div id="list_container">
   <div id="list_menu">
+    <!-- 검색 기능 구현 예정
     <input type="text" id="list_search" placeholder="제목으로 검색...">
+    <input type="button" id="list_search_submit" onclick="searchList()" value="검색">
+    <script type="text/javascript">
+      function searchList() {
+
+        let keyword = document.getElementById("list_search").value;
+        let contest = null;
+
+        for (let c = 1; ; c++) {
+          let contest = document.getElementById("list-contest-" + c);
+          if (contest === null) {
+            break;
+          }
+
+        }
+
+      }
+    </script>
+    -->
+
+    <select id="list_done">
+      <option value="-1" selected>전체</option>
+      <option value="0">모집중인</option>
+      <option value="1">마감된</option>
+    </select>
+    <select id="list_major">
+      <option value="-1" selected>전체 분야</option>
+      %s
+    </select>
+    <select id="list_region">
+      <option value="-1" selected>전체 지역</option>
+      %s
+    </select>
     <select id="list_sort_orderby">
       <option value="code" selected>코드 기준</option>
       <option value="title">제목 기준</option>
@@ -14,14 +47,22 @@
     </select>
     <input type="button" id="list_sort_submit" onclick="sortList()" value="보기">
     <br>
+    <script type="text/javascript" src="/assets/script/xhttp.js"></script>
     <script type="text/javascript">
       function sortList() {
-        let sortBy = document.getElementById("list_sort_orderby").value;
-        let ascending = document.getElementById("list_sort_ascending").value;
-        let page = window.location + "?sortby=" + sortBy + "&asc=" + ascending;
-        location.href = page;
+
+        let param = setParams([
+          [ "done",   document.getElementById("list_done").value ],
+          [ "major",  document.getElementById("list_major").value ],
+          [ "region", document.getElementById("list_region").value ],
+          [ "sortby", document.getElementById("list_sort_orderby").value ],
+          [ "asc",    document.getElementById("list_sort_ascending").value ]
+        ], false);
+        location.href = "/contest/list" + "?" + param;
+
       }
     </script>
+
   </div>
   <div id="list_scroll">%s</div>
 </div>

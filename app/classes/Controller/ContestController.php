@@ -139,11 +139,29 @@ class ContestController {
 
     Header::setServerHeader(Header::CONTENT_TYPE, MimeType::_HTML->value);
 
-    $sortBy = $_GET["sortby"] ?? "code";
-    $ascending = $_GET["asc"] ?? 0;
-    $contestsList = ContestModel::getContests((String)$sortBy, (int)$ascending);
+    $_GET["done"]   ??= -1;
+    $_GET["major"]  ??= -1;
+    $_GET["region"] ??= -1;
 
-    printf("%s", ContestListPage::page($contestsList));
+    $filters = [];
+    if ($_GET["done"] != -1) {
+      $filters["done"] = $_GET["done"];
+    }
+    if ($_GET["major"] != -1) {
+      $filters["field"] = $_GET["major"];
+    }
+    if ($_GET["region"] != -1) {
+      $filters["region"] = $_GET["region"];
+    }
+
+    $sortBy = (String)($_GET["sortby"] ?? "code");
+    $ascending = (int)($_GET["asc"] ?? 0);
+
+    $contestsList = ContestModel::getContests($filters, $sortBy, $ascending);
+    $majorsList = CsvDataLoader::loadMajorsList();
+    $regionsList = CsvDataLoader::loadRegionsList();
+
+    printf("%s", ContestListPage::page($majorsList, $regionsList, $contestsList));
 
   }
 
