@@ -21,12 +21,14 @@ function sendPostRequest(path, params, handler) {
 
 }
 
-function setParams(values) {
+function setParams(values, urlEncode = true) {
 
   let params = "";
+  let paramValue = "";
 
   for (let i = 0; i < values.length; i++) {
-    params += (values[i][0] + "=" + encodeURIComponent(values[i][1]));
+    paramValue = urlEncode ? encodeURIComponent(values[i][1]) : values[i][1];
+    params += (values[i][0] + "=" + paramValue);
     if (i != values.length - 1) {
       params += "&";
     }
