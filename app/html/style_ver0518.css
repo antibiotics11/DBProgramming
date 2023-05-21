@@ -58,6 +58,8 @@
     display:flex;
     justify-content: space-between;
     align-items:center;
+    border-bottom:1px gray solid;
+    padding-bottom: 5px;
 }
 
 .forminput{
@@ -84,10 +86,11 @@
     text-align: right;
 }
 
+/*
 .contestlist{
     border-bottom:1px gray solid;
 }
-
+*/
 .aform{
     text-decoration: none;
     font-weight: bold;
