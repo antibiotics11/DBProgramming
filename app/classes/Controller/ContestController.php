@@ -5,8 +5,8 @@ namespace ContestApp\Controller;
 use \aalfiann\JSON;
 use \ContestApp\Http\{Header, StatusCode};
 use \ContestApp\Resource\{MimeType, CsvDataLoader};
-use \ContestApp\Model\{ContestAttribute, ContestModel};
-use \ContestApp\ViewPage\{ContestListPage, ContestCreatePage, ContestInfoPage};
+use \ContestApp\Model\{ContestAttribute, ContestModel, AccountModel};
+use \ContestApp\ViewPage\{ContestListPage, ContestCreatePage, ContestInfoPage, ErrorPage};
 use \ContestApp\System\Time;
 
 /**
@@ -128,6 +128,28 @@ class ContestController {
   // 공모전 정보 출력
   public static function viewContestDetail(int $contestCode): void {
 
+    if (!AccountController::signedIn()) {
+      self::redirectToSignin(); return;
+    }
+
+    Header::setServerHeader(Header::CONTENT_TYPE, MimeType::_HTML->value);
+
+    $contestInfo = ContestModel::getContestsInfo("code", $contestCode);  // 공모전 정보
+    if (count($contestInfo) == 0) {           // 코드와 일치하는 공모전이 없는 경우
+      StatusCode::setServerStatusCode(StatusCode::NOT_FOUND);
+      printf("%s", ErrorPage::NotFound());
+      return;
+    }
+    $contestInfo = $contestInfo[0];
+
+    $phone = AccountController::parseAccessToken()[ContestAttribute::Phone->value];
+    $memberInfo = AccountModel::getUserInfoByPhone($phone);   // 현재 로그인한 사용자 정보
+
+    $majorsList   = CsvDataLoader::loadMajorsList();
+    $regionsList  = CsvDataLoader::loadRegionsList();
+
+    printf("%s", ContestInfoPage::page($contestInfo, $memberInfo, $majorsList, $regionsList));
+
   }
 
   // 공모전 목록 출력
@@ -158,8 +180,8 @@ class ContestController {
     $ascending = (int)($_GET["asc"] ?? 0);
 
     $contestsList = ContestModel::getContests($filters, $sortBy, $ascending);
-    $majorsList = CsvDataLoader::loadMajorsList();
-    $regionsList = CsvDataLoader::loadRegionsList();
+    $majorsList   = CsvDataLoader::loadMajorsList();
+    $regionsList  = CsvDataLoader::loadRegionsList();
 
     printf("%s", ContestListPage::page($majorsList, $regionsList, $contestsList));
 
