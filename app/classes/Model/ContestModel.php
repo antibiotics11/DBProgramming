@@ -55,7 +55,7 @@ class ContestModel {
   public static function getContestsInfo(String $attribute, String $value): Array {
 
     $pdo = new PdoConnector(\MYSQL_HOSTNAME, \MYSQL_DBNAME, \MYSQL_USERNAME, \MYSQL_PASSWORD);
-    $result = $pdo->read(self::COLUMN_NAME_MEMBER, [ $attribute, $value ]);
+    $result = $pdo->read(self::COLUMN_NAME_CONTEST, [ $attribute, $value ]);
 
     return $result;
 
