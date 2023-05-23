@@ -1,29 +1,31 @@
 <div id="grid1">
   <div id="logo">
-    <img id="logo1" src="/assets/image/logo3_cropped.png" onclick="location.reload()" alt="로고" >
+    <!-- 로고 이미지 클릭시 사이트 메인 페이지로 리디렉션 -->
+    <img id="logo1" src="/assets/image/logo3_cropped.png" onclick="location.href=window.location.hostname" alt="로고" >
     <div id="top_menu">
       <input type="button" class="top_menu_btn_2" id="top_menu_account" onclick="location.href='/account/signin'" value="내 계정정보">
-      <input type="button" class="top_menu_btn_1" id="top_menu_my" onclick="location.href='/contest/list'" value="공모전 목록">
+      <input type="button" class="top_menu_btn_1" id="top_menu_list" onclick="location.href='/contest/list'" value="공모전 목록">
       <input type="button" class="top_menu_btn_1" id="top_menu_post" onclick="location.href='/contest/create'" value="공모전 등록">
-      </div>
+    </div>
   </div>
   <script type="text/javascript">
 
+    // phone 쿠키가 있으면 로그인한 상태로 간주
     let phone = getCookieByName("phone");
     let signedIn = (typeof(phone) != "undefined" && phone.length > 1);
 
     let elementTopMenuAccount = document.getElementById("top_menu_account");
-    let elementTopMenuMy = document.getElementById("top_menu_my");
+    let elementTopMenuList = document.getElementById("top_menu_list");
     let elementTopMenuPost = document.getElementById("top_menu_post");
 
     if (signedIn) {  // 로그인한 상태면
-      elementTopMenuAccount.value = "내 계정정보";
-      elementTopMenuMy.style.display = "block";
-      elementTopMenuPost.style.display = "block";   // 등록 버튼 출력
+      elementTopMenuAccount.value = "내 계정정보";    // 로그인 버튼을 내 계정정보로 바꿔서 출력
+      elementTopMenuList.style.display = "block";   // 공모전 목록 버튼 출력
+      elementTopMenuPost.style.display = "block";   // 공모전 등록 버튼 출력
     } else {         // 로그인하지 않은 상태면
       elementTopMenuAccount.value = "로그인";
-      elementTopMenuMy.style.display = "none";
-      elementTopMenuPost.style.display = "none";    // 등록 버튼 가리기
+      elementTopMenuList.style.display = "none";    // 공모전 목록 버튼 가리기
+      elementTopMenuPost.style.display = "none";    // 공모전 등록 버튼 가리기
     }
 
   </script>
@@ -34,10 +36,14 @@
   </div>
   <div id="footer">
     <br>
-    <a class="footer_a" href="/assets/privcay_policy.htm">개인정보 처리 방침</a>
+    <a class="footer_a" href="/assets/terms_of_service.htm">Terms</a>
     &nbsp;&nbsp;|&nbsp;&nbsp;
-    <a class="footer_a" href="/assets/term_of_use.htm">이용약관</a>
+    <a class="footer_a" href="/assets/privacy_statement.htm">Privacy</a>
+    &nbsp;&nbsp;|&nbsp;&nbsp;
+    <a class="footer_a" href="https://github.com/antibiotics11/DBProgramming">GitHub</a>
     <br><br>
-    ⓒ KunsanDBProject
+    ⓒ 2023.
+    <a class="footer_a" href="https://www.kunsan.ac.kr/cie">Kunsan National Univ.</a>
+    DB Project
   </div>
 </div>
