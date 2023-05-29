@@ -1,4 +1,5 @@
-function create(
+// 공모전 등록요청 전송
+function createContest(
   title, field, headcount,        // 제목, 모집 분야, 모집인원
   beginningdate, deadline,        // 모집 시작일, 종료 기한
   intramural, rating, region      // 참여 교내외 조건, 참여 조건 점수, 참여 조건 지역
@@ -35,6 +36,93 @@ function create(
     }
 
   });
+
+}
+
+// 공모전 수정요청 전송
+function updateContest(
+  // 수정 가능 항목: 인원수, 종료일, 평가점수, 지역
+  code, title, headcount, beginningdate, deadline, rating, region
+) {
+
+  if (!checkValidationFields(title, headcount, beginningdate, deadline)) {
+    return;
+  }
+
+  deadline = (toTimestamp(deadline) / 1000).toString();
+
+  let path = "/contest/update";
+  let params = [
+    [ "code",      code ],
+    [ "headcount", headcount ],
+    [ "deadline",  deadline ],
+    [ "rating",    rating ],
+    [ "region",    region ]
+  ];
+
+  sendPostRequest(path, params, function(response) {
+
+    let result = JSON.parse(response);
+    if (result.status == 1) {
+      alert("수정했습니다.");
+      location.reload();
+    } else {
+      alert("수정할수 없습니다.");
+    }
+
+  });
+
+}
+
+// 공모전 삭제요청 전송
+function deleteContest(code) {      // 삭제할 공모전 코드
+
+  if (!confirm("정말 삭제하시겠습니까?")) {
+    return;
+  }
+
+  let path = "/contest/delete";
+  let params = [ "code", code ];
+
+  sendPostRequest(path, params, function(response) {
+
+    let result = JSON.parse(response);
+    if (result.status == 1) {
+      alert("삭제했습니다.");
+      location.href = "/contest/list";
+    } else {
+      alert("삭제할수 없습니다.");
+    }
+
+  });
+
+}
+
+// 공모전 참가요청 전송
+function applyForContest(code) {
+
+  let path = "/contest/apply";
+  let params = [ "code", code ];
+
+  sendPostRequest(path, params, function(response) {
+
+    let result = JSON.parse(response);
+    if (result.status == 1) {
+      alert("참가 신청했습니다.");
+      location.reload();
+    } else if (result.status == 2) {
+      alert("참가 취소했습니다.");
+      location.reload();
+    } else {
+      alert("요청을 처리할수 없습니다.");
+    }
+
+  });
+
+}
+
+// 참가자 목록을 팝업으로 출력
+function viewApplicants(code) {
 
 }
 
