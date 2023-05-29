@@ -25,7 +25,7 @@ class Router {
 
 		$this->router->post("/account/signin",      [AccountController::class, "handleSignin"]);        // 로그인 요청 처리
 		$this->router->post("/account/signup",      [AccountController::class, "handleSignup"]);        // 회원가입 요청 처리
-		$this->router->post("/account/eval"         [AccountController::class, "handleEval"]);          // 회원 평가
+		$this->router->post("/account/eval",        [AccountController::class, "handleEval"]);          // 회원 평가
 		$this->router->get("/account/signout",      [AccountController::class, "handleSignout"]);       // 로그아웃 요청 처리
 		$this->router->get("/account/signin",       [AccountController::class, "viewSignin"]);          // 로그인 페이지 조회
 		$this->router->get("/account/signup",       [AccountController::class, "viewSignup"]);          // 회원가입 페이지 조회
