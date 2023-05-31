@@ -131,16 +131,38 @@ function applyForContest(code) {
   sendPostRequest(path, params, function(response) {
 
     let result = JSON.parse(response);
-    if (result.status == 1) {
-      if (parseInt(result.apply)) {
-        alert("참여 신청했습니다.");
-      } else {
-        alert("참여 신청을 취소했습니다.")
-      }
-    } else {
-      alert("요청을 처리할수 없습니다.");
-    }
-    location.reload();
+    switch (result.status) {
+
+    case 1 :
+      alert(parseInt(result.apply) ? "참여 신청했습니다." : "참여 신청을 취소했습니다.");
+      location.reload();
+      break;
+
+    case 2 :
+      alert("본인이 등록한 공모전에는 신청할 수 없습니다."); break;
+
+    case 3 :
+      alert("일치하는 공모전이 없습니다."); break;
+
+    case 4 :
+      alert("서버 오류가 발생했습니다.\r\n관리자에게 문의해주세요."); break;
+
+    case 11 :
+      alert("아직 모집이 시작되지 않았습니다."); break;
+
+    case 12 :
+      alert("이미 모집이 종료되었습니다."); break;
+
+    case 13 :
+      alert("지역 조건이 일치하지 않아 신청할 수 없습니다."); break;
+
+    case 14 :
+      alert("학교 조건이 일치하지 않아 신청할 수 없습니다."); break;
+
+    case 15 :
+      alert("현재 등급으로는 신청할 수 없습니다."); break;
+
+    };
 
   });
 

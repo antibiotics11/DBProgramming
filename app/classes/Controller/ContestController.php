@@ -5,7 +5,7 @@ namespace ContestApp\Controller;
 use \aalfiann\JSON;
 use \ContestApp\Http\{Header, StatusCode};
 use \ContestApp\Resource\{MimeType, CsvDataLoader};
-use \ContestApp\Model\{ContestAttribute, ContestModel, AccountModel};
+use \ContestApp\Model\{ContestAttribute, ContestModel, AccountAttribute, AccountModel};
 use \ContestApp\ViewPage\{ContestListPage, ContestCreatePage, ContestInfoPage, ErrorPage};
 use \ContestApp\System\Time;
 
@@ -59,6 +59,57 @@ class ContestController {
 
   }
 
+  // 참가신청을 검증
+  private static function validateApplication(int $code, String $phone): int {
+
+    $applicantInfo = AccountModel::getUserInfoByPhone($phone);
+    $contestInfo   = ContestModel::getContestInfoByCode($code);
+
+    $creatorPhone  = $contestInfo[AccountAttribute::Phone->value];
+    $creatorInfo   = AccountModel::getUserInfoByPhone($creatorPhone);
+
+    $currentTime = time();
+
+    // 모집 시작일이 지났는지 확인
+    $beginning = sprintf("%s 00:00:00", $contestInfo[ContestAttribute::Beginningdate->value]);
+    $beginning = Time::StrTimestampToInt($beginning);
+    if ($beginning > $currentTime) {
+      return 11;
+    }
+
+    // 마감일이 지났는지 확인
+    $deadline = sprintf("%s 00:00:00", $contestInfo[ContestAttribute::Deadline->value]);
+    $deadline = Time::StrTimestampToInt($deadline);
+    if ($deadline <= $currentTime) {
+      return 12;
+    }
+
+    // 이미 모집 종료된 상태인지 확인
+    if ((bool)$contestInfo[ContestAttribute::Done->value]) {
+      return 12;
+    }
+
+    // 학교가 일치하는지 확인
+    if ((int)$contestInfo[ContestAttribute::Intramural->value]) {
+      if (
+        (int)$applicantInfo[AccountAttribute::College->value] !=
+        (int)$creatorInfo[AccountAttribute::College->value]
+      ) {
+        return 14;
+      }
+    }
+
+    // 평가 점수가 일치하는지 확인
+    if ((int)$rating = $contestInfo[ContestAttribute::Rating->value]) {
+      if ($rating < (int)$applicantInfo[AccountAttribute::Rating->value]) {
+        return 15;
+      }
+    }
+
+    return 1;
+
+  }
+
   // 공모전 참가신청 요청 처리
   public static function handleApply(): void {
 
@@ -72,19 +123,18 @@ class ContestController {
     $phone = AccountController::parseAccessToken()[ContestAttribute::Phone->value];
     $code = self::parsePostedParams()[ContestAttribute::Code->value];
 
-    if (count(ContestModel::getContestInfoByCode($code)) !== 0) {
-      if (!ContestModel::isCreatedBy($code, $phone)) {
-
-        $success = false;
-        if (ContestModel::appliedInContest($code, $phone)) {
+    if (count(ContestModel::getContestInfoByCode($code)) !== 0) {   // 일치하는 공모전이 있으면
+      if (!ContestModel::isCreatedBy($code, $phone)) {              // 본인이 등록한 공모전이 아니면
+        if (ContestModel::appliedInContest($code, $phone)) {        // 이미 참가 신청했으면
           $apply = 0;
-          $success = ContestModel::cancleApplication($code, $phone);
+          $result = ContestModel::cancleApplication($code, $phone) ? 1 : 4;
         } else {
           $apply = 1;
-          $success = ContestModel::applyInContest($code, $phone);
+          $result = self::validateApplication($code, $phone);   // 참가 조건을 검증
+          if ($result == 1) {
+            $result = ContestModel::applyInContest($code, $phone) ? 1 : 4;
+          }
         }
-        $result = $success ? 1 : 4;  // 처리 완료했으면 1, DB 오류 발생했으면 4
-
       } else {
         $result = 2;     // 본인이 등록한 공모전이면 2
       }
@@ -253,6 +303,7 @@ class ContestController {
     $phone = AccountController::parseAccessToken()[ContestAttribute::Phone->value];
     $page = ContestInfoPage::page($contestInfo,
       AccountModel::getUserInfoByPhone($phone),
+      AccountModel::getUserInfoByPhone($contestInfo[AccountAttribute::Phone->value]),
       CsvDataLoader::loadMajorsList(),
       CsvDataLoader::loadRegionsList(),
       CsvDataLoader::loadCollegesList(),

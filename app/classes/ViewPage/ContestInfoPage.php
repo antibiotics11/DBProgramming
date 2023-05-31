@@ -7,7 +7,7 @@ class ContestInfoPage {
 
   private const VIEW_CONTEST_INFO_PATH = \APP_VIEW_PATH . "/contestinfo.html";
   private static function loadContestInfo(
-    Array $contestInfo, Array $memberInfo,
+    Array $contestInfo, Array $memberInfo, Array $creatorInfo,
     Array $majorsList, Array $regionsList, Array $collegesList,
     bool $isCreator, bool $applied
   ): String {
@@ -23,7 +23,7 @@ class ContestInfoPage {
     $headcount = $contestInfo[ContestAttribute::Headcount->value];
     $beginning = $contestInfo[ContestAttribute::Beginningdate->value];
     $deadline  = $contestInfo[ContestAttribute::Deadline->value];
-    $college   = $intramural ? ViewPage::loadSelectedOption((int)$memberInfo["college"], $collegesList) : "무관";
+    $college   = $intramural ? ViewPage::loadSelectedOption((int)$creatorInfo["college"], $collegesList) : "무관";
     $region    = ViewPage::loadSelectedOption((int)$contestInfo[ContestAttribute::Region->value], $regionsList);
     $rating    = match ((int)$contestInfo[ContestAttribute::Rating->value]) {
       0 => "무관", 1 => "좋음", 2 => "보통 이상", 3 => "나쁨 이상"
@@ -41,12 +41,16 @@ class ContestInfoPage {
   }
 
   public static function page(
-    Array $contestInfo, Array $memberInfo,
+    Array $contestInfo, Array $memberInfo, Array $creatorInfo,
     Array $majorsList, Array $regionsList, Array $collegesList,
     bool $isCreator = false, bool $applied = false
   ): String {
     return ViewPage::assemble(
-      self::loadContestInfo($contestInfo, $memberInfo, $majorsList, $regionsList, $collegesList, $isCreator, $applied)
+      self::loadContestInfo(
+        $contestInfo, $memberInfo, $creatorInfo,
+        $majorsList, $regionsList, $collegesList,
+        $isCreator, $applied
+      )
     );
   }
 
