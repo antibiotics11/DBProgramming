@@ -43,12 +43,23 @@ function getContestCode() {
 function doUpdate() {
 
   let bgColor = "white";
-  document.getElementById("headcount").readOnly = false;      // 인원수를 입력 가능하게
-  document.getElementById("headcount").style.background = bgColor;
-  document.getElementById("deadline").readOnly = false;       // 종료일을 입력 가능하게
-  document.getElementById("deadline").style.background = bgColor;
-  document.getElementById("rating").disabled = false;         // 평가점수 선택 가능하게
-  document.getElementById("region").disabled = false;         // 지역 선택 가능하게
+
+  let headcountElement = document.getElementById("headcount");
+  let deadlineElement = document.getElementById("deadline");
+  let ratingElement = document.getElementById("rating");
+  let regionElement = document.getElementById("region");
+
+  headcountElement.readOnly = false;      // 인원수를 입력 가능하게
+  headcountElement.className = "input_sign";
+
+  deadlineElement.readOnly = false;       // 종료일을 입력 가능하게
+  deadlineElement.className = "input_sign";
+
+  ratingElement.disabled = false;         // 평가점수 선택 가능하게
+  ratingElement.className = "input_sign";
+
+  regionElement.disabled = false;         // 지역 선택 가능하게
+  regionElement.className = "input_sign";
 
   if (document.getElementById("submit_update").value === "수정 확인") {
     submitUpdate();
