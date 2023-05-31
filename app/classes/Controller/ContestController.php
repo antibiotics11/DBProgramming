@@ -68,14 +68,23 @@ class ContestController {
     }
 
     $result = -1;
+    $apply  = 1;    // 참가신청 요청이면 1, 참가취소 요청이면 0
     $phone = AccountController::parseAccessToken()[ContestAttribute::Phone->value];
     $code = self::parsePostedParams()[ContestAttribute::Code->value];
 
-    $contestsInfo = &ContestModel::getContestInfoByCode($code)[0];
-    if (isset($contestsInfo[ContestAttribute::Code->value])) {
-      if (ContestModel::isCreatedBy($code, $phone)) {
-        // 참가신청 성공했으면 1, DB 오류가 발생했으면 4
-        $result = ContestModel::applyInContest($code, $phone) ? 1 : 4;
+    if (count(ContestModel::getContestInfoByCode($code)) !== 0) {
+      if (!ContestModel::isCreatedBy($code, $phone)) {
+
+        $success = false;
+        if (ContestModel::appliedInContest($code, $phone)) {
+          $apply = 0;
+          $success = ContestModel::cancleApplication($code, $phone);
+        } else {
+          $apply = 1;
+          $success = ContestModel::applyInContest($code, $phone);
+        }
+        $result = $success ? 1 : 4;  // 처리 완료했으면 1, DB 오류 발생했으면 4
+
       } else {
         $result = 2;     // 본인이 등록한 공모전이면 2
       }
@@ -85,7 +94,7 @@ class ContestController {
 
     Header::setServerHeader(Header::CONTENT_TYPE, MimeType::_JSON->value);
     printf("%s",
-      (new JSON)->encode([ "status" => $result])
+      (new JSON)->encode([ "status" => $result, "apply" => $apply ])
     );
 
   }
@@ -247,7 +256,8 @@ class ContestController {
       CsvDataLoader::loadMajorsList(),
       CsvDataLoader::loadRegionsList(),
       CsvDataLoader::loadCollegesList(),
-      ContestModel::isCreatedBy($contestCode, $phone)
+      ContestModel::isCreatedBy($contestCode, $phone),
+      ContestModel::appliedInContest($contestCode, $phone)
     );
     printf("%s", $page);
 

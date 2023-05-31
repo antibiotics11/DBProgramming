@@ -181,8 +181,8 @@ class ContestModel {
     $pdo = new PdoConnector(\MYSQL_HOSTNAME, \MYSQL_DBNAME, \MYSQL_USERNAME, \MYSQL_PASSWORD);
     $result = [];
     try {
-      $stmt = $pdo->pdo->prepare();
-      $stmt->execute($query);
+      $stmt = $pdo->pdo->prepare($query);
+      $stmt->execute();
       $result = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?? [];
     } catch (\PDOException $e) {
       throw $e;
@@ -194,14 +194,23 @@ class ContestModel {
 
   // 해당 공모전에 이미 참가했는지 확인한다.
   public static function appliedInContest(int $code, String $phone): bool {
-    return count(self::getApplicants($code, $phone));
+    return (bool)count(self::getApplicants($code, $phone));
   }
 
   // 공모전에 참가신청한다.
   public static function applyInContest(int $code, String $phone): bool {
 
     $pdo = new PdoConnector(\MYSQL_HOSTNAME, \MYSQL_DBNAME, \MYSQL_USERNAME, \MYSQL_PASSWORD);
-    return $pod->insert(self::TABLE_NAME_APPLICANT, [ $phone, $code ]);
+    return $pdo->insert(self::TABLE_NAME_APPLICANT, [ $phone, $code ]);
+
+  }
+
+  // 공모전 참가를 취소한다.
+  public static function cancleApplication(int $code, String $phone): bool {
+
+    $query = sprintf("DELETE FROM %s WHERE code=%d AND phone='%s'", self::TABLE_NAME_APPLICANT, $code, $phone);
+    $pdo = new PdoConnector(\MYSQL_HOSTNAME, \MYSQL_DBNAME, \MYSQL_USERNAME, \MYSQL_PASSWORD);
+    return $pdo->submit($query);
 
   }
 

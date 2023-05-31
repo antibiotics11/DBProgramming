@@ -132,14 +132,15 @@ function applyForContest(code) {
 
     let result = JSON.parse(response);
     if (result.status == 1) {
-      alert("참가 신청했습니다.");
-      location.reload();
-    } else if (result.status == 2) {
-      alert("참가 취소했습니다.");
-      location.reload();
+      if (parseInt(result.apply)) {
+        alert("참여 신청했습니다.");
+      } else {
+        alert("참여 신청을 취소했습니다.")
+      }
     } else {
       alert("요청을 처리할수 없습니다.");
     }
+    location.reload();
 
   });
 

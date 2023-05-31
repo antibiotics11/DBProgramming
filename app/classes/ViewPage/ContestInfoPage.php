@@ -9,7 +9,7 @@ class ContestInfoPage {
   private static function loadContestInfo(
     Array $contestInfo, Array $memberInfo,
     Array $majorsList, Array $regionsList, Array $collegesList,
-    bool $isCreator
+    bool $isCreator, bool $applied
   ): String {
 
     $intramural = (bool)$contestInfo[ContestAttribute::Intramural->value];
@@ -29,11 +29,7 @@ class ContestInfoPage {
       0 => "무관", 1 => "좋음", 2 => "보통 이상", 3 => "나쁨 이상"
     };
 
-    $buttonValue = "참여신청";
-    if ((int)$contestInfo[ContestAttribute::Done->value]) {
-      $buttonValue = "모집완료";
-    }
-
+    $buttonValue = $applied ? "참여취소" : "참여신청";
     $contestInfo = sprintf(ViewPage::read(self::VIEW_CONTEST_INFO_PATH),
       $code, $phone, $done, $title, $field,
       $headcount, $beginning, $deadline,
@@ -47,10 +43,10 @@ class ContestInfoPage {
   public static function page(
     Array $contestInfo, Array $memberInfo,
     Array $majorsList, Array $regionsList, Array $collegesList,
-    bool $isCreator = false
+    bool $isCreator = false, bool $applied = false
   ): String {
     return ViewPage::assemble(
-      self::loadContestInfo($contestInfo, $memberInfo, $majorsList, $regionsList, $collegesList, $isCreator)
+      self::loadContestInfo($contestInfo, $memberInfo, $majorsList, $regionsList, $collegesList, $isCreator, $applied)
     );
   }
 
