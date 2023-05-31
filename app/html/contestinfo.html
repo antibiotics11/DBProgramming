@@ -61,14 +61,24 @@
         <li class="formli">
             <span> 지역 </span>
             <span class="forminput">
-                <input class="show_form" type="text" id="region" value="%s" readonly>
+                <!-- <input class="show_form" type="text" id="region" value="" readonly> -->
+                <select class="show_form" id="region" disabled>
+                  <option value="-1" selected>무관</option>
+                  %s
+                </select>
             </span>
         </li>
         <br>
         <li class="formli">
             <span> 참여조건 점수 </span>
             <span class="forminput">
-                <input class="show_form" type="text" id="rating" value="%s" readonly>
+                <!-- <input class="show_form" type="text" id="rating" value="" readonly> -->
+                <select class="show_form" id="rating" disabled>
+                  <option value="0">무관</option>
+                  <option value="1">좋음</option>
+                  <option value="2">보통 이상</option>
+                  <option value="3">나쁨 이상</option>
+                </select>
             </span>
         </li>
     </ul>
@@ -87,4 +97,8 @@
     <script type="text/javascript" src="/assets/script/xhttp.js"></script>
     <script type="text/javascript" src="/assets/script/contest.js"></script>
     <script type="text/javascript" src="/assets/script/contestinfopage.js"></script>
+    <script type="text/javascript">
+      document.getElementById("region").value = "%s";
+      document.getElementById("rating").value = "%s";
+    </script>
 </div>

@@ -24,17 +24,17 @@ class ContestInfoPage {
     $beginning = $contestInfo[ContestAttribute::Beginningdate->value];
     $deadline  = $contestInfo[ContestAttribute::Deadline->value];
     $college   = $intramural ? ViewPage::loadSelectedOption((int)$creatorInfo["college"], $collegesList) : "무관";
-    $region    = ViewPage::loadSelectedOption((int)$contestInfo[ContestAttribute::Region->value], $regionsList);
-    $rating    = match ((int)$contestInfo[ContestAttribute::Rating->value]) {
-      0 => "무관", 1 => "좋음", 2 => "보통 이상", 3 => "나쁨 이상"
-    };
+    $regions   = ViewPage::loadSelectOptions($regionsList);
+    $region    = (int)$contestInfo[ContestAttribute::Region->value];
+    $rating    = (int)$contestInfo[ContestAttribute::Rating->value];
 
     $buttonValue = $applied ? "참여취소" : "참여신청";
     $contestInfo = sprintf(ViewPage::read(self::VIEW_CONTEST_INFO_PATH),
       $code, $phone, $done, $title, $field,
       $headcount, $beginning, $deadline,
-      $college, $region, $rating,
-      $buttonValue
+      $college, $regions,
+      $buttonValue,
+      $region, $rating
     );
     return $contestInfo;
 
