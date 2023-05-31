@@ -74,6 +74,30 @@ function updateContest(
 
 }
 
+// 공모전 모집종료요청 전송
+function closeContest(code) {
+
+  if (!confirm("이 공모전을 모집 종료하시겠습니까?")) {
+    return;
+  }
+
+  let path = "/contest/close";
+  let params = [ [ "code", code ] ];
+
+  sendPostRequest(path, params, function(response) {
+
+    let result = JSON.parse(response);
+    if (result.status == 1) {
+      alert("모집이 종료되었습니다.");
+      location.reload();
+    } else {
+      alert("종료할수 없습니다.");
+    }
+
+  })
+
+}
+
 // 공모전 삭제요청 전송
 function deleteContest(code) {      // 삭제할 공모전 코드
 
@@ -82,7 +106,7 @@ function deleteContest(code) {      // 삭제할 공모전 코드
   }
 
   let path = "/contest/delete";
-  let params = [ "code", code ];
+  let params = [ [ "code", code ] ];
 
   sendPostRequest(path, params, function(response) {
 
@@ -102,7 +126,7 @@ function deleteContest(code) {      // 삭제할 공모전 코드
 function applyForContest(code) {
 
   let path = "/contest/apply";
-  let params = [ "code", code ];
+  let params = [ [ "code", code ] ];
 
   sendPostRequest(path, params, function(response) {
 

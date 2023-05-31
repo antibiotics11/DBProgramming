@@ -3,89 +3,163 @@
     <h1>공모전 정보</h1>
     <ul class="formlist">
         <!---->
-        <input type="text" id="code" hidden>
-        <input type="text" id="phone" hidden>
+        <input type="text" id="code" value="%d" hidden>
+        <input type="text" id="phone" value="%s" hidden>
         <li class="formli">
-            <span>
-                공모전 제목
-            </span>
+            <span> 공모전 제목 </span>
             <span class="forminput">
-                <input class="show_form" type="text" id="title" readonly>
+                <input class="show_form" type="text" id="title" value="%s" readonly>
             </span>
         </li>
         <br>
         <li class="formli">
-            <span>
-                분야
-            </span>
+            <span> 분야 </span>
             <span class="forminput">
-                <input class="show_form" type="text" id="field" readonly>
-            </span>            
+                <input class="show_form" type="text" id="field" value="%s" readonly>
+            </span>
         </li>
         <br>
         <li class="formli">
-            <span>
-                인원수
-            </span>
+            <span> 모집 인원수 </span>
             <span class="forminput">
-                <input class="show_form" type="text" id="headcount" readonly>
-            </span>       
+                <input class="show_form" type="text" id="headcount" value="%s" readonly>
+            </span>
         </li>
         <br>
         <li class="formli">
-            <span>
-                시작일
-            </span>
+            <span> 모집 시작일 </span>
             <span class="forminput">
-                <input class="show_form" type="text" id="beginningdate" readonly>
-            </span>            
+                <input class="show_form" type="text" id="beginningdate" value="%s" readonly>
+            </span>
         </li>
         <br>
         <li class="formli">
-            <span>
-                마감일
-            </span>
+            <span> 모집 마감일 </span>
             <span class="forminput">
-                <input class="show_form" type="text" id="deadline" readonly>
-            </span>    
-        </li>   
+                <input class="show_form" type="text" id="deadline" value="%s" readonly>
+            </span>
+        </li>
+        <br>
+        <!-- 모집완료시에는 참여신청 버튼만 모집완료로 변경 -->
+        <!--
+        <li class="formli">
+            <span> 모집완료 </span>
+            <span class="forminput">
+                <input class="show_form" type="text" id="done" value="" readonly>
+            </span>
+        </li>
+        -->
         <br>
         <li class="formli">
-            <span>
-                모집완료
-            </span>
+            <span> 교내대회 </span>
             <span class="forminput">
-                <input class="show_form" type="text" id="done" readonly>
+                <input class="show_form" type="text" id="intramural" value="%s" readonly>
             </span>
-        </li>   
+        </li>
         <br>
         <li class="formli">
-            <span>
-                교내대회
-            </span>
+            <span> 지역 </span>
             <span class="forminput">
-                <input class="show_form" type="text" id="intramural" readonly>
-            </span>    
-        </li>  
+                <input class="show_form" type="text" id="region" value="%s" readonly>
+            </span>
+        </li>
         <br>
         <li class="formli">
-            <span>
-                지역
-            </span>
+            <span> 참여조건 점수 </span>
             <span class="forminput">
-                <input class="show_form" type="text" id="region" readonly>
+                <input class="show_form" type="text" id="rating" value="%s" readonly>
             </span>
-        </li>   
-        <br>
-        <li class="formli">
-            <span>
-                게시자 등급
-            </span>
-            <span class="forminput">
-                <input class="show_form" type="text" id="rating" readonly>
-            </span>
-        </li> 
+        </li>
     </ul>
-    <input class="input_button" type="button" onclick="" value="확인">
-    <input class="input_button" type="button" onclick="" value="참가/수정"><!--게시자는 수정, 게시자 아니면 참가-->
+
+    <!-- 게시자에게만 출력되는 버튼 -->
+    <input id="view_applicants" class="input_button" type="button" onclick="viewApplicants()" value="지원자">
+    <input id="submit_close"    class="input_button" type="button" onclick="submitClose()"  value="모집종료">
+    <input id="submit_update"   class="input_button" type="button" onclick="doUpdate()" value="수정">
+    <input id="submit_delete"   class="input_button" type="button" onclick="submitDelete()" value="삭제">
+
+    <!-- 게시자가 아닌 회원에게 출력되는 버튼
+         모집중이면 '참여신청', 모집완료시에는 '모집종료', 이미 참가했으면 '참여취소'
+    -->
+    <input id="submit_entry" class="input_button" type="button" onclick="submitApply()" value="%s">
+
+    <script type="text/javascript" src="/assets/script/xhttp.js"></script>
+    <script type="text/javascript" src="/assets/script/contest.js"></script>
+    <script type="text/javascript">
+
+      let creatorPhone = document.getElementById("phone").value.trim();
+      let memberPhone  = getCookieByName("phone").trim();
+
+      if (userIsCreator(creatorPhone, memberPhone)) {   // 현재 공모전 게시자면
+        document.getElementById("view_applicants").style.display = "block";  // 지원자 버튼 출력
+        document.getElementById("submit_close").style.display    = "block";  // 모집종료 버튼 출력
+        document.getElementById("submit_update").style.display   = "block";  // 수정 버튼 출력
+        document.getElementById("submit_delete").style.display   = "block";  // 삭제 버튼 출력
+        document.getElementById("submit_entry").style.display    = "none";   // 참가지원 버튼 가리기
+      } else {    // 게시자가 아니면
+        document.getElementById("view_applicants").style.display = "none";   // 지원자 버튼 가리기
+        document.getElementById("submit_close").style.display    = "none";   // 모집종료 버튼 가리기
+        document.getElementById("submit_update").style.display   = "none";   // 수정 버튼 가리기
+        document.getElementById("submit_delete").style.display   = "none";   // 삭제 버튼 가리기
+        document.getElementById("submit_entry").style.display    = "block";  // 참가지원 버튼 출력
+      }
+
+      function userIsCreator(creatorPhone, memberPhone) {
+        return (creatorPhone === memberPhone);
+      }
+
+      // 현재 공모전 코드를 확인한다.
+      function getContestCode() {
+        let code = document.getElementById("code").value;   // code 요소에서 코드를 가져온다
+        if (isNaN(code) || code.length < 1) {               // 가져온 값이 뭔가 이상하면
+          code = window.location.pathname.split("/").pop(); // 현재 URL에서 코드를 가져온다
+        }
+        return code;
+      }
+
+      // 현재 폼을 수정 가능한 폼으로 변경한다.
+      function doUpdate() {
+
+        document.getElementById("headcount").readOnly = false;      // 인원수를 입력 가능하게
+        document.getElementById("deadline").readOnly = false;       // 종료일을 입력 가능하게
+        document.getElementById("rating").disabled = false;         // 평가점수 선택 가능하게
+        document.getElementById("region").disabled = false;         // 지역 선택 가능하게
+
+        if (document.getElementById("submit_update").value === "수정 확인") {
+          submitUpdate();
+        } else {
+          document.getElementById("submit_update").value = "수정 확인";
+        }
+
+      }
+
+      // 수정 요청을 보낸다
+      function submitUpdate() {
+        updateContest(
+          getContestCode(),
+          document.getElementById("title").value,
+          document.getElementById("headcount").value,
+          document.getElementById("beginningdate").value,
+          document.getElementById("deadline").value,
+          document.getElementById("rating").value,
+          document.getElementById("region").value
+        );
+      }
+
+      // 모집종료 요청을 보낸다
+      function submitClose() {
+        closeContest(getContestCode());
+      }
+
+      // 삭제 요청을 보낸다
+      function submitDelete() {
+        deleteContest(getContestCode());
+      }
+
+      // 참가신청 요청을 보낸다
+      function submitApply() {
+        applyForContest(getContestCode());
+      }
+
+    </script>
 </div>

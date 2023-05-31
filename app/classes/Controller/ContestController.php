@@ -59,6 +59,37 @@ class ContestController {
 
   }
 
+  // 공모전 참가신청 요청 처리
+  public static function handleApply(): void {
+
+    if (!AccountController::signedIn()) {     // 로그인하지 않은 상태면 Bad Request 응답
+      StatusCode::setServerStatusCode(StatusCode::BAD_REQUEST);
+      return;
+    }
+
+    $result = -1;
+    $phone = AccountController::parseAccessToken()[ContestAttribute::Phone->value];
+    $code = self::parsePostedParams()[ContestAttribute::Code->value];
+
+    $contestsInfo = &ContestModel::getContestInfoByCode($code)[0];
+    if (isset($contestsInfo[ContestAttribute::Code->value])) {
+      if (ContestModel::isCreatedBy($code, $phone)) {
+        // 참가신청 성공했으면 1, DB 오류가 발생했으면 4
+        $result = ContestModel::applyInContest($code, $phone) ? 1 : 4;
+      } else {
+        $result = 2;     // 본인이 등록한 공모전이면 2
+      }
+    } else {
+      $result = 3;       // 없는 공모전 코드면 3
+    }
+
+    Header::setServerHeader(Header::CONTENT_TYPE, MimeType::_JSON->value);
+    printf("%s",
+      (new JSON)->encode([ "status" => $result])
+    );
+
+  }
+
   // 공모전 등록 요청 처리
   public static function handleCreate(): void {
 
@@ -82,7 +113,7 @@ class ContestController {
 
     $latestCode = ContestModel::getLatestContestCode();
     if ($latestCode == -1) {
-      $result = 3;
+      $result = 3;      // DB 오류 발생했으면 3
     }
     $params[ContestAttribute::Code->value] = $latestCode + 1;
 
@@ -91,17 +122,89 @@ class ContestController {
     }
 
     Header::setServerHeader(Header::CONTENT_TYPE, MimeType::_JSON->value);
-    printf("%s", (new JSON)->encode([ "status" => $result, "code" => $latestCode + 1 ]));
+    printf("%s",
+      (new JSON)->encode([ "status" => $result, "code" => $latestCode + 1 ])
+    );
 
   }
 
   // 공모전 수정 요청 처리
   public static function handleUpdate(): void {
 
+    if (!AccountController::signedIn()) {     // 로그인하지 않은 상태면 Bad Request 응답
+      StatusCode::setServerStatusCode(StatusCode::BAD_REQUEST);
+      return;
+    }
+
+    $result = -1;
+    $params = self::parsePostedParams();
+    $code   = $params[ContestAttribute::Code->value];
+    $phone  = AccountController::parseAccessToken()[ContestAttribute::Phone->value];
+
+    if (ContestModel::isCreatedBy($code, $phone)) {
+      // 수정했으면 1, DB 오류 발생했으면 3
+      $result = ContestModel::updateContest($code, $params) ? 1 : 3;
+    } else {
+      $result = 2;    // 본인이 등록한 공모전이 아니면 2
+    }
+
+    Header::setServerHeader(Header::CONTENT_TYPE, MimeType::_JSON->value);
+    printf("%s",
+      (new JSON)->encode([ "status" => $result ])
+    );
+
+  }
+
+  // 공모전 모집종료 요청 처리
+  public static function handleClose(): void {
+
+    if (!AccountController::signedIn()) {     // 로그인하지 않은 상태면 Bad Request 응답
+      StatusCode::setServerStatusCode(StatusCode::BAD_REQUEST);
+      return;
+    }
+
+    $result = -1;
+    $code = self::parsePostedParams()[ContestAttribute::Code->value];
+    $phone = AccountController::parseAccessToken()[ContestAttribute::Phone->value];
+
+    if (ContestModel::isCreatedBy($code, $phone)) {
+      // 종료했으면 1, DB 오류 발생했으면 3
+      $result = ContestModel::closeContest($code) ? 1 : 3;
+    } else {
+      $result = 2;    // 본인이 등록한 공모전이 아니면 2
+    }
+
+    Header::setServerHeader(Header::CONTENT_TYPE, MimeType::_JSON->value);
+    printf("%s",
+      (new JSON)->encode([ "status" => $result ])
+    );
+
+
   }
 
   // 공모전 삭제 요청 처리
   public static function handleDelete(): void {
+
+    if (!AccountController::signedIn()) {     // 로그인하지 않은 상태면 Bad Request 응답
+      StatusCode::setServerStatusCode(StatusCode::BAD_REQUEST);
+      return;
+    }
+
+    $result = -1;   // 응답 결과
+    $code = self::parsePostedParams()[ContestAttribute::Code->value];
+    $phone = AccountController::parseAccessToken()[ContestAttribute::Phone->value];
+
+    if (ContestModel::isCreatedBy($code, $phone)) {
+      // 삭제했으면 1, DB 오류 발생했으면 3
+      $result = ContestModel::deleteContest($code) ? 1 : 3;
+    } else {
+      $result = 2;    // 본인이 등록한 공모전이 아니면 2
+    }
+
+    Header::setServerHeader(Header::CONTENT_TYPE, MimeType::_JSON->value);
+    printf("%s",
+      (new JSON)->encode([ "status" => $result ])
+    );
 
   }
 
@@ -114,14 +217,11 @@ class ContestController {
 
     Header::setServerHeader(Header::CONTENT_TYPE, MimeType::_HTML->value);
 
-    $majorsList = CsvDataLoader::loadMajorsList();
-    $regionsList = CsvDataLoader::loadRegionsList();
-    printf("%s", ContestCreatePage::page($majorsList, $regionsList));
-
-  }
-
-  // 공모전 수정 페이지 출력
-  public static function viewUpdate(int $contestCode): void {
+    $page = ContestCreatePage::page(
+      CsvDataLoader::loadMajorsList(),
+      CsvDataLoader::loadRegionsList()
+    );
+    printf("%s", $page);
 
   }
 
@@ -134,21 +234,22 @@ class ContestController {
 
     Header::setServerHeader(Header::CONTENT_TYPE, MimeType::_HTML->value);
 
-    $contestInfo = ContestModel::getContestsInfo("code", $contestCode);  // 공모전 정보
+    $contestInfo = ContestModel::getContestInfoByCode($contestCode);  // 공모전 정보
     if (count($contestInfo) == 0) {           // 코드와 일치하는 공모전이 없는 경우
       StatusCode::setServerStatusCode(StatusCode::NOT_FOUND);
       printf("%s", ErrorPage::NotFound());
       return;
     }
-    $contestInfo = $contestInfo[0];
 
     $phone = AccountController::parseAccessToken()[ContestAttribute::Phone->value];
-    $memberInfo = AccountModel::getUserInfoByPhone($phone);   // 현재 로그인한 사용자 정보
-
-    $majorsList   = CsvDataLoader::loadMajorsList();
-    $regionsList  = CsvDataLoader::loadRegionsList();
-
-    printf("%s", ContestInfoPage::page($contestInfo, $memberInfo, $majorsList, $regionsList));
+    $page = ContestInfoPage::page($contestInfo,
+      AccountModel::getUserInfoByPhone($phone),
+      CsvDataLoader::loadMajorsList(),
+      CsvDataLoader::loadRegionsList(),
+      CsvDataLoader::loadCollegesList(),
+      ContestModel::isCreatedBy($contestCode, $phone)
+    );
+    printf("%s", $page);
 
   }
 
@@ -179,11 +280,12 @@ class ContestController {
     $sortBy = (String)($_GET["sortby"] ?? "code");
     $ascending = (int)($_GET["asc"] ?? 0);
 
-    $contestsList = ContestModel::getContests($filters, $sortBy, $ascending);
-    $majorsList   = CsvDataLoader::loadMajorsList();
-    $regionsList  = CsvDataLoader::loadRegionsList();
-
-    printf("%s", ContestListPage::page($majorsList, $regionsList, $contestsList));
+    $page = ContestListPage::page(
+      CsvDataLoader::loadMajorsList(),
+      CsvDataLoader::loadRegionsList(),
+      ContestModel::getContests($filters, $sortBy, $ascending)
+    );
+    printf("%s", $page);
 
   }
 

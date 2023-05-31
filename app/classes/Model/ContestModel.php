@@ -8,8 +8,10 @@ use \ContestApp\Database\PdoConnector;
  */
 class ContestModel {
 
-  private const COLUMN_NAME_CONTEST  = "contest";
-  private const SQL_SELECT_CONTEST   = "SELECT * FROM " . self::COLUMN_NAME_CONTEST;
+  private const TABLE_NAME_CONTEST   = "contest";
+  private const TABLE_NAME_APPLICANT = "participant";
+  private const SQL_SELECT_CONTEST   = "SELECT * FROM " . self::TABLE_NAME_CONTEST;
+  private const SQL_SELECT_APPLICANT = "SELECT * FROM " . self::TABLE_NAME_APPLICANT;
 
   public static function getSelectQuery(Array $filters = [], String $sortBy = "code", bool $ascending = false): String {
 
@@ -55,21 +57,57 @@ class ContestModel {
   public static function getContestsInfo(String $attribute, String $value): Array {
 
     $pdo = new PdoConnector(\MYSQL_HOSTNAME, \MYSQL_DBNAME, \MYSQL_USERNAME, \MYSQL_PASSWORD);
-    $result = $pdo->read(self::COLUMN_NAME_CONTEST, [ $attribute, $value ]);
+    $result = $pdo->read(self::TABLE_NAME_CONTEST, [ $attribute, $value ]);
 
     return $result;
 
   }
 
-  // 가장 마지막으로 생성된 공모전의 코드를 가져온다.
+  // 공모전 코드로 공모전 정보를 가져온다.
+  public static function getContestInfoByCode(int $code): Array {
+
+    $contestsInfo = self::getContestsInfo(ContestAttribute::Code->value, $code);
+    if (count($contestsInfo) == 0) {
+      return [];
+    }
+    return $contestsInfo[0];
+
+  }
+
+  // 게시자 휴대폰 번호로 공모전 정보를 가져온다.
+  public static function getContestsInfoByPhone(String $phone): Array {
+    return self::getContestsInfo(ContestAttribute::Phone->value, $phone);
+  }
+
+  // 가장 최근 게시된 공모전 정보를 가져온다.
+  public static function getLatestContestInfo(): Array {
+    return self::getContests()[0] ?? [];
+  }
+
+  // 가장 최근 게시된 공모전의 코드를 가져온다.
   public static function getLatestContestCode(): int {
 
-    try {
-      $contests = self::getContests();
-      return (count($contests)) ? (int)$contests[0][ContestAttribute::Code->value] : 0;
-    } catch (\PDOException) {
-      return -1;
-    }
+    $contestInfo = self::getLatestContestInfo();
+    return (count($contestInfo)) ? (int)$contestInfo[ContestAttribute::Code->value] : -1;
+
+  }
+
+  // 해당 공모전을 등록한 사람인지 확인한다.
+  public static function isCreatedBy(int $code, String $phone): bool {
+
+    $contestInfo = self::getContestInfoByCode($code);
+    return (strcmp(
+      trim($phone),
+      trim($contestInfo[ContestAttribute::Phone->value])
+    ) == 0) ? true : false;
+
+  }
+
+  // 모집 종료된 공모전인지 확인한다.
+  public static function isClosed(int $code): bool {
+
+    $contestInfo = self::getContestInfoByCode($code);
+    return (bool)$contestInfo[ContestAttribute::Done->value];
 
   }
 
@@ -77,7 +115,7 @@ class ContestModel {
   public static function createContest(Array $contestInfo): bool {
 
     $pdo = new PdoConnector(\MYSQL_HOSTNAME, \MYSQL_DBNAME, \MYSQL_USERNAME, \MYSQL_PASSWORD);
-    return $pdo->insert(self::COLUMN_NAME_CONTEST, [
+    return $pdo->insert(self::TABLE_NAME_CONTEST, [
       $contestInfo[ContestAttribute::Code->value],
       $contestInfo[ContestAttribute::Phone->value],
       $contestInfo[ContestAttribute::Title->value],
@@ -90,6 +128,80 @@ class ContestModel {
       $contestInfo[ContestAttribute::Rating->value],
       $contestInfo[ContestAttribute::Region->value]
     ]);
+
+  }
+
+  // 공모전 정보를 수정한다.
+  public static function updateContest(Array $contestInfo): bool {
+
+    $code = $contestInfo[ContestAttribute::Phone->value];
+
+    $pdo = new PdoConnector(\MYSQL_HOSTNAME, \MYSQL_DBNAME, \MYSQL_USERNAME, \MYSQL_PASSWORD);
+
+    $query = sprintf("UPDATE %s", self::TABLE_NAME_CONTEST);
+
+
+    $query = sprintf("%s WHERE %s=%d", ContestAttribute::Code->value, $code);
+
+    return (bool)$pdo->submit($query);
+
+  }
+
+  // 공모전 모집을 종료한다.
+  public static function closeContest(int $code): bool {
+
+    $pdo = new PdoConnector(\MYSQL_HOSTNAME, \MYSQL_DBNAME, \MYSQL_USERNAME, \MYSQL_PASSWORD);
+    $query = sprintf("UPDATE %s SET done=1 WHERE code=%d", self::TABLE_NAME_CONTEST, $code);
+    return (bool)$pdo->submit($query);
+
+  }
+
+  // 공모전을 삭제한다.
+  public static function deleteContest(int $code): bool {
+
+    $pdo = new PdoConnector(\MYSQL_HOSTNAME, \MYSQL_DBNAME, \MYSQL_USERNAME, \MYSQL_PASSWORD);
+    return $pdo->delete(self::TABLE_NAME_CONTEST, [
+      ContestAttribute::Code->value,
+      (String)$code
+    ]);
+
+  }
+
+  // 참가자 테이블의 전체 값을 가져온다.
+  public static function getApplicants(int $code = -1, String $phone = ""): Array {
+
+    $query = self::SQL_SELECT_APPLICANT;
+    if ($code > 0) {
+      $query = sprintf("%s WHERE %s=%d", $query, ContestAttribute::Code->value, $code);
+    }
+    if (strlen($phone) > 0) {
+      $phone = sprintf("%s AND %s='%s'", $query, ContestAttribute::Phone->value, $phone);
+    }
+
+    $pdo = new PdoConnector(\MYSQL_HOSTNAME, \MYSQL_DBNAME, \MYSQL_USERNAME, \MYSQL_PASSWORD);
+    $result = [];
+    try {
+      $stmt = $pdo->pdo->prepare();
+      $stmt->execute($query);
+      $result = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?? [];
+    } catch (\PDOException $e) {
+      throw $e;
+    }
+
+    return $result;
+
+  }
+
+  // 해당 공모전에 이미 참가했는지 확인한다.
+  public static function appliedInContest(int $code, String $phone): bool {
+    return count(self::getApplicants($code, $phone));
+  }
+
+  // 공모전에 참가신청한다.
+  public static function applyInContest(int $code, String $phone): bool {
+
+    $pdo = new PdoConnector(\MYSQL_HOSTNAME, \MYSQL_DBNAME, \MYSQL_USERNAME, \MYSQL_PASSWORD);
+    return $pod->insert(self::TABLE_NAME_APPLICANT, [ $phone, $code ]);
 
   }
 
