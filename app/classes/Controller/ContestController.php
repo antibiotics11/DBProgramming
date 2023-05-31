@@ -303,7 +303,6 @@ class ContestController {
     }
 
     self::autoCloseContest($contestCode, $contestInfo);
-    $contestInfo[ContestAttribute::Done->value] = 1;
 
     $phone = AccountController::parseAccessToken()[ContestAttribute::Phone->value];
     $page = ContestInfoPage::page($contestInfo,
