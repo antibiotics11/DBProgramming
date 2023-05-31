@@ -15,8 +15,9 @@ class ContestInfoPage {
     $intramural = (bool)$contestInfo[ContestAttribute::Intramural->value];
     $regionsList[] = [ "code" => -1, "name" => "무관" ];
 
-    $code      = $contestInfo[ContestAttribute::Code->value];
+    $code      = (int)$contestInfo[ContestAttribute::Code->value];
     $phone     = $contestInfo[ContestAttribute::Phone->value];
+    $done      = (int)$contestInfo[ContestAttribute::Done->value];
     $title     = $contestInfo[ContestAttribute::Title->value];
     $field     = ViewPage::loadSelectedOption((int)$contestInfo[ContestAttribute::Field->value], $majorsList);
     $headcount = $contestInfo[ContestAttribute::Headcount->value];
@@ -34,7 +35,7 @@ class ContestInfoPage {
     }
 
     $contestInfo = sprintf(ViewPage::read(self::VIEW_CONTEST_INFO_PATH),
-      $code, $phone, $title, $field,
+      $code, $phone, $done, $title, $field,
       $headcount, $beginning, $deadline,
       $college, $region, $rating,
       $buttonValue
