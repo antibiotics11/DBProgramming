@@ -123,6 +123,8 @@ class ContestController {
     $phone = AccountController::parseAccessToken()[ContestAttribute::Phone->value];
     $code = self::parsePostedParams()[ContestAttribute::Code->value];
 
+    self::autoCloseContest($code);
+
     if (count(ContestModel::getContestInfoByCode($code)) !== 0) {   // 일치하는 공모전이 있으면
       if (!ContestModel::isCreatedBy($code, $phone)) {              // 본인이 등록한 공모전이 아니면
         if (ContestModel::appliedInContest($code, $phone)) {        // 이미 참가 신청했으면
@@ -300,6 +302,9 @@ class ContestController {
       return;
     }
 
+    self::autoCloseContest($contestCode, $contestInfo);
+    $contestInfo[ContestAttribute::Done->value] = 1;
+
     $phone = AccountController::parseAccessToken()[ContestAttribute::Phone->value];
     $page = ContestInfoPage::page($contestInfo,
       AccountModel::getUserInfoByPhone($phone),
@@ -347,6 +352,20 @@ class ContestController {
       ContestModel::getContests($filters, $sortBy, $ascending)
     );
     printf("%s", $page);
+
+  }
+
+  // 모집 기한이 지난 공모전은 Done=true로 변경한다.
+  public static function autoCloseContest(int $code, Array $contestInfo = []): void {
+
+    if (count($contestInfo) == 0) {
+      $contestInfo = ContestModel::getContestInfoByCode($code);
+    }
+    $deadline = sprintf("%s 00:00:00", $contestInfo[ContestAttribute::Deadline->value]);
+    $deadline = Time::StrTimestampToInt($deadline);
+    if ($deadline <= time()) {
+      ContestModel::closeContest($code);
+    }
 
   }
 
