@@ -9,7 +9,7 @@ use \ContestApp\Http\{Header, StatusCode};
 use \ContestApp\Resource\{MimeType, CsvDataLoader};
 use \ContestApp\Security\WebToken;
 use \ContestApp\Model\{AccountAttribute, AccountModel};
-use \ContestApp\ViewPage\{SigninPage, SignupPage, AccountInfoPage};
+use \ContestApp\ViewPage\{SigninPage, SignupPage, AccountInfoPage, ErrorPage};
 
 /**
  * 계정 관련 요청 컨트롤러
@@ -211,6 +211,27 @@ class AccountController {
     (new Cookie)->set(AccountAttribute::Phone->value, "");   // phone 쿠키를 제거한다
 
     self::redirect();  // 리디렉션
+
+  }
+
+  // 회원탈퇴 요청을 처리한다.
+  public static function handleDelete(): void {
+
+    if (!self::signedIn()) {   // 로그인하지 않은 사용자면
+      StatusCode::setServerStatusCode(StatusCode::BAD_REQUEST);
+      return;
+    }
+
+    $phone  = self::parseAccessToken()[AccountAttribute::Phone->value];
+    $result = AccountModel::deleteAccount($phone);
+    if ($result) {
+      self::handleSignout();   // 회원탈퇴 후 자동 로그아웃
+    } else {
+      // DB 오류가 발생했으면 Internal Server Error 출력
+      StatusCode::setServerStatusCode(StatusCode::INTERNAL_SERVER_ERROR);
+      Header::setServerHeader(Header::CONTENT_TYPE, MimeType::_HTML->value);
+      printf("%s", ErrorPage::InternalServerError());
+    }
 
   }
 

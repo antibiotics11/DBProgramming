@@ -57,7 +57,7 @@ function signup(phone, password, name, college, sex, email, major, birthday) {
 
 		let result = JSON.parse(response);
 		if (result.status == 1) {
-			alert("회원가입을 완료했습니다.<br>로그인 페이지로 이동합니다.")
+			alert("회원가입을 완료했습니다.\r\n로그인 페이지로 이동합니다.")
 			location.href = "/account/signin";
 		} else if (result.status == 2) {
 			alert("이미 가입된 계정입니다.");
@@ -74,6 +74,12 @@ function signup(phone, password, name, college, sex, email, major, birthday) {
 function signout() {
 	if (confirm("로그아웃하시겠습니까?")) {
 		location.href = "/account/signout";
+	}
+}
+
+function deleteAccount() {
+	if (confirm("모든 데이터가 삭제되며 복구할 수 없습니다.\r\n정말 탈퇴하시겠습니까?")) {
+		location.href = "/account/delete";
 	}
 }
 

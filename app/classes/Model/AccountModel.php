@@ -61,4 +61,12 @@ class AccountModel {
 
   }
 
+  // 계정을 삭제한다.
+  public static function deleteAccount(String $phone): bool {
+
+    $pdo = new PdoConnector(\MYSQL_HOSTNAME, \MYSQL_DBNAME, \MYSQL_USERNAME, \MYSQL_PASSWORD);
+    return $pdo->delete(self::COLUMN_NAME_MEMBER, [ AccountAttribute::Phone->value, $phone ]);
+
+  }
+
 };

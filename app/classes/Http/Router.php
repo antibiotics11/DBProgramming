@@ -29,6 +29,7 @@ class Router {
 		$this->router->get("/account/signout",      [AccountController::class, "handleSignout"]);       // 로그아웃 요청 처리
 		$this->router->get("/account/signin",       [AccountController::class, "viewSignin"]);          // 로그인 페이지 조회
 		$this->router->get("/account/signup",       [AccountController::class, "viewSignup"]);          // 회원가입 페이지 조회
+		$this->router->get("/account/delete",       [AccountController::class, "handleDelete"]);        // 회원탈퇴 요청 처리
 		$this->router->get("/account/info/{phone}", [AccountController::class, "viewMemberInfo"]);      // 게정정보 조회 (다른 회원)
 		$this->router->get("/account/info",         [AccountController::class, "viewAccountInfo"]);     // 계정정보 조회 (회원 본인)
 		$this->router->get("/account",              [AccountController::class, "redirect"]);            // 리디렉션
