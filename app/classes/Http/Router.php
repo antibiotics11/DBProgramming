@@ -25,7 +25,7 @@ class Router {
 
 		$this->router->post("/account/signin",      [AccountController::class, "handleSignin"]);        // 로그인 요청 처리
 		$this->router->post("/account/signup",      [AccountController::class, "handleSignup"]);        // 회원가입 요청 처리
-		$this->router->post("/account/eval",        [AccountController::class, "handleEval"]);          // 회원 평가
+		$this->router->post("/account/r/{code}",    [AccountController::class, "handleRate"]);          // 회원 평가
 		$this->router->get("/account/signout",      [AccountController::class, "handleSignout"]);       // 로그아웃 요청 처리
 		$this->router->get("/account/signin",       [AccountController::class, "viewSignin"]);          // 로그인 페이지 조회
 		$this->router->get("/account/signup",       [AccountController::class, "viewSignup"]);          // 회원가입 페이지 조회
@@ -40,6 +40,7 @@ class Router {
 		$this->router->post("/contest/close",       [ContestController::class, "handleClose"]);         // 공모전 모집종료 요청 처리
 		$this->router->post("/contest/delete",      [ContestController::class, "handleDelete"]);        // 공모전 삭제 요청 처리
 		$this->router->get("/contest/create",       [ContestController::class, "viewCreate"]);          // 공모전 등록 페이지 조회
+		$this->router->get("/contest/v/a/{code}",   [ContestController::class, "viewApplicants"]);      // 공모전 지원자 목록 조회
 		$this->router->get("/contest/v/{code}",     [ContestController::class, "viewContestDetail"]);   // 공모전 정보 조회
 		$this->router->get("/contest/v",            [ContestController::class, "redirectToList"]);      // 리디렉션
 		$this->router->get("/contest/list",         [ContestController::class, "viewContestList"]);     // 공모전 목록 조회
