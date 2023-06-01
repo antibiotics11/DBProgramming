@@ -45,7 +45,7 @@ function updateContest(
   code, title, headcount, beginningdate, deadline, rating, region
 ) {
 
-  if (!checkValidationFields(title, headcount, beginningdate, deadline)) {
+  if (!checkValidationFields(title, headcount, deadline, deadline)) {
     return;
   }
 

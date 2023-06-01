@@ -134,14 +134,22 @@ class ContestModel {
   // 공모전 정보를 수정한다.
   public static function updateContest(Array $contestInfo): bool {
 
-    $code = $contestInfo[ContestAttribute::Phone->value];
+    $code         = $contestInfo[ContestAttribute::Code->value];
+    $newHeadcount = (int)$contestInfo[ContestAttribute::Headcount->value];
+    $newDeadline  = (String)$contestInfo[ContestAttribute::Deadline->value];
+    $newRegion    = (int)$contestInfo[ContestAttribute::Region->value];
+    $newRating    = (int)$contestInfo[ContestAttribute::Rating->value];
+
+    $query = sprintf("UPDATE %s SET %s=%d, %s='%s', %s=%d, %s=%d WHERE %s=%d",
+      self::TABLE_NAME_CONTEST,
+      ContestAttribute::Headcount->value, $newHeadcount,
+      ContestAttribute::Deadline->value,  $newDeadline,
+      ContestAttribute::Region->value,    $newRegion,
+      ContestAttribute::Rating->value,    $newRating,
+      ContestAttribute::Code->value,      $code
+    );
 
     $pdo = new PdoConnector(\MYSQL_HOSTNAME, \MYSQL_DBNAME, \MYSQL_USERNAME, \MYSQL_PASSWORD);
-
-    $query = sprintf("UPDATE %s", self::TABLE_NAME_CONTEST);
-
-
-    $query = sprintf("%s WHERE %s=%d", ContestAttribute::Code->value, $code);
 
     return (bool)$pdo->submit($query);
 

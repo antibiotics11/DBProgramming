@@ -202,9 +202,11 @@ class ContestController {
     $code   = $params[ContestAttribute::Code->value];
     $phone  = AccountController::parseAccessToken()[ContestAttribute::Phone->value];
 
+    $deadline = Time::DateYMD("-", $params[ContestAttribute::Deadline->value]);
+    $params[ContestAttribute::Deadline->value] = $deadline;
+
     if (ContestModel::isCreatedBy($code, $phone)) {
-      // 수정했으면 1, DB 오류 발생했으면 3
-      $result = ContestModel::updateContest($code, $params) ? 1 : 3;
+      $result = ContestModel::updateContest($params) ? 1 : 3;   // 수정했으면 1, DB 오류 발생했으면 3
     } else {
       $result = 2;    // 본인이 등록한 공모전이 아니면 2
     }
