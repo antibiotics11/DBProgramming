@@ -71,6 +71,31 @@ function signup(phone, password, name, college, sex, email, major, birthday) {
 
 }
 
+function rateMember(targetPhone, like = 1) {
+
+	let path = "/account/r/" + targetPhone;
+	let params = [
+		[ "target", targetPhone ],
+		[ "like",   like ]
+	];
+
+	sendPostRequest(path, params, function(response) {
+
+		let result = JSON.parse(response);
+		if (result.status == 1) {
+			location.reload();
+		} else if (result.status == 2) {
+			alert("이미 평가한 회원입니다.");
+		} else if (result.status == 3) {
+			alert("계정 정보가 없습니다.");
+		} else if (result.status == 4) {
+			alert("서버 오류가 발생했습니다.");
+		}
+
+	});
+
+}
+
 function signout() {
 	if (confirm("로그아웃하시겠습니까?")) {
 		location.href = "/account/signout";

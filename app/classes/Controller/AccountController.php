@@ -252,4 +252,34 @@ class AccountController {
 
   }
 
+  // 평가 요청을 처리한다.
+  public static function handleRate(String $targetPhone): void {
+
+    if (!self::signedIn()) {   // 로그인하지 않은 사용자면
+      StatusCode::setServerStatusCode(StatusCode::BAD_REQUEST);
+      return;
+    }
+
+    $phoneParser = fn($phone) => preg_replace("/[^0-9]/", "", trim($phone));
+    $targetPhone = $phoneParser($targetPhone);
+    $memberPhone = $phoneParser(self::parseAccessToken()[AccountAttribute::Phone->value]);
+    $like = self::parsePostedParams()["like"];
+
+    $result = -1;
+    if (count(AccountModel::getUserInfoByPhone($targetPhone)) &&
+        count(AccountModel::getUserInfoByPhone($memberPhone))) {
+      if (!count(AccountModel::getRatingByTargetAndMember($targetPhone, $memberPhone))) {
+        $result = AccountModel::rate($targetPhone, $memberPhone, (bool)$like) ? 1 : 4;
+      } else {
+        $result = 2;  // 이미 평가했으면 2
+      }
+    } else {
+      $result = 3;   // 일치하는 계정이 없으면 3
+    }
+
+    Header::setServerHeader(Header::CONTENT_TYPE, MimeType::_JSON->value);
+    printf("%s", (new JSON)->encode([ "status" => $result ]));
+
+  }
+
 };

@@ -8,13 +8,14 @@ use \ContestApp\Database\PdoConnector;
  */
 class AccountModel {
 
-  private const COLUMN_NAME_MEMBER = "member";
+  private const TABLE_NAME_MEMBER = "member";
+  private const TABLE_NAME_RATING = "rating";
 
   // 속성 => 값 과 일치하는 계정들 정보를 모두 가져온다.
   public static function getUsersInfo(String $attribute, String $value): Array {
 
     $pdo = new PdoConnector(\MYSQL_HOSTNAME, \MYSQL_DBNAME, \MYSQL_USERNAME, \MYSQL_PASSWORD);
-    $result = $pdo->read(self::COLUMN_NAME_MEMBER, [ $attribute, $value ]);
+    $result = $pdo->read(self::TABLE_NAME_MEMBER, [ $attribute, $value ]);
 
     return $result;
 
@@ -47,7 +48,7 @@ class AccountModel {
   public static function createNewAccount(Array $accountInfo): bool {
 
     $pdo = new PdoConnector(\MYSQL_HOSTNAME, \MYSQL_DBNAME, \MYSQL_USERNAME, \MYSQL_PASSWORD);
-    return $pdo->insert(self::COLUMN_NAME_MEMBER, [
+    return $pdo->insert(self::TABLE_NAME_MEMBER, [
       $accountInfo[AccountAttribute::Phone->value],
       self::getPasswordHash($accountInfo[AccountAttribute::Password->value]),
       $accountInfo[AccountAttribute::Name->value],
@@ -65,7 +66,52 @@ class AccountModel {
   public static function deleteAccount(String $phone): bool {
 
     $pdo = new PdoConnector(\MYSQL_HOSTNAME, \MYSQL_DBNAME, \MYSQL_USERNAME, \MYSQL_PASSWORD);
-    return $pdo->delete(self::COLUMN_NAME_MEMBER, [ AccountAttribute::Phone->value, $phone ]);
+    return $pdo->delete(self::TABLE_NAME_MEMBER, [ AccountAttribute::Phone->value, $phone ]);
+
+  }
+
+  // 회원을 평가한다.
+  public static function rate(String $targetPhone, String $memberPhone, bool $like): bool {
+
+    $pdo = new PdoConnector(\MYSQL_HOSTNAME, \MYSQL_DBNAME, \MYSQL_USERNAME, \MYSQL_PASSWORD);
+    return $pdo->insert(self::TABLE_NAME_RATING, [ $targetPhone, $memberPhone, (int)$like ]);
+
+  }
+
+  // 속성 => 값과 일치하는 평가 내역을 가져온다.
+  public static function getRating(String $attribute, String $value): Array {
+
+    $pdo = new PdoConnector(\MYSQL_HOSTNAME, \MYSQL_DBNAME, \MYSQL_USERNAME, \MYSQL_PASSWORD);
+    $result = $pdo->read(self::TABLE_NAME_RATING, [ $attribute, $value ]);
+
+    return $result;
+
+  }
+
+  public static function getRatingByTarget(String $phone): Array {
+    return self::getRating("target", $phone);
+  }
+
+  public static function getRatingByMember(String $phone): Array {
+    return self::getRating("phone", $phone);
+  }
+
+  public static function getRatingByTargetAndMember(String $targetPhone, String $memberPhone): Array {
+
+    $query = sprintf("SELECT * FROM %s WHERE target='%s' AND phone='%s'",
+      self::TABLE_NAME_RATING,
+      $targetPhone,
+      $memberPhone
+    );
+    $pdo = new PdoConnector(\MYSQL_HOSTNAME, \MYSQL_DBNAME, \MYSQL_USERNAME, \MYSQL_PASSWORD);
+
+    try {
+      $stmt = $pdo->pdo->prepare($query);
+      $stmt->execute();
+      return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    } catch (\PDOException $e) {
+      return [];
+    }
 
   }
 
