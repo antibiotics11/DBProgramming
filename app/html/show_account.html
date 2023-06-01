@@ -1,7 +1,7 @@
 <!--계정 정보 화면-->
 <!-- <link rel="stylesheet" href="style.css"> -->
 <div class="sign" id="show_account">
-    <h1>공모전 사이트</h1>
+    <h1 id="account_title">계정 정보</h1>
     <input class="show_form" style="text-align:center;" type="text" id="phone" placeholder="(사용자 폰번호)" value="%s" readonly>
     <br><br>
     <input class="show_form" style="text-align:center;" type="text" id="name" placeholder="(사용자 이름)" value="%s" readonly>
@@ -18,16 +18,29 @@
     <br><br>
     <input class="show_form" style="text-align:center;" type="text" id="rating" placeholder="(사용자 등급)" value="%s" readonly>
     <br><br>
-    <span>
+    <span id="account_buttons">
         <input class="input_button" type="button" onclick="signout()" value="로그아웃">
         <input class="input_button" type="button" onclick="deleteAccount()" value="회원탈퇴">
     </span>
     <script type="text/javascript" src="/assets/script/account.js"></script>
     <script type="text/javascript">
+
+      let accountPhone = document.getElementById("phone").value.trim();
+      let memberPhone = getCookieByName("phone").trim();
+
+      if (accountPhone === memberPhone) {
+        document.getElementById("account_title").innerHTML = "내 계정정보";
+        document.getElementById("account_buttons").style.display = "block";
+      } else {
+        document.getElementById("account_title").innerHTML = "회원정보";
+        document.getElementById("account_buttons").style.display = "none";
+      }
+
       function signout() {
         if (confirm("로그아웃 하시겠습니까?")) {
           location.href="/account/signout";
         }
       }
+
     </script>
 </div>

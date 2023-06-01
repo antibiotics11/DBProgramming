@@ -129,6 +129,23 @@ class AccountController {
 
   }
 
+  // 다른회원 계정정보 출력
+  public static function viewMemberInfo(String $memberPhone): void {
+
+    if (!self::signedIn()) {   // 로그인하지 않은 사용자면 리디렉션
+      self::redirect(); return;
+    }
+
+    Header::setServerHeader(Header::CONTENT_TYPE, MimeType::_HTML->value);
+
+    $memberInfo = AccountModel::getUserInfoByPhone($memberPhone);
+    $collegesList = CsvDataLoader::loadCollegesList();
+    $majorsList = CsvDataLoader::loadMajorsList();
+
+    printf("%s", AccountInfoPage::page($memberInfo, $collegesList, $majorsList));
+
+  }
+
   // 로그인 요청 처리
   public static function handleSignin(): void {
 
