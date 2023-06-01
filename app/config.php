@@ -18,3 +18,6 @@ const MYSQL_HOSTNAME           = "localhost";                    // MySQL 서버
 const MYSQL_DBNAME             = "contest_db";                   // MySQL DB 이름
 const MYSQL_USERNAME           = "contest";                      // MySQL DB 사용자명
 const MYSQL_PASSWORD           = "asdf1234";                     // MySQL DB 패스워드
+
+const SERVER_DEFAULT_TIMEZONE  = "GMT";
+const SERVER_PRINT_EXCEPTION   = true;                           // 예외 발생시 세부내역을 출력
