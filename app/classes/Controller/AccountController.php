@@ -139,6 +139,11 @@ class AccountController {
     Header::setServerHeader(Header::CONTENT_TYPE, MimeType::_HTML->value);
 
     $memberInfo = AccountModel::getUserInfoByPhone($memberPhone);
+    if (count($memberInfo) == 0) {        // 일치하는 계정 정보가 없는 경우
+      StatusCode::setServerStatusCode(StatusCode::NOT_FOUND);
+      printf("%s", ErrorPage::NotFound());
+      return;
+    }
     $collegesList = CsvDataLoader::loadCollegesList();
     $majorsList = CsvDataLoader::loadMajorsList();
 
