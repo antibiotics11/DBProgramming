@@ -100,10 +100,15 @@ class ContestController {
     }
 
     // 평가 점수가 일치하는지 확인
-    if ((int)$rating = $contestInfo[ContestAttribute::Rating->value]) {
-      if ($rating < (int)$applicantInfo[AccountAttribute::Rating->value]) {
-        return 15;
-      }
+    $ratingCondition = $contestInfo[ContestAttribute::Rating->value];
+    $memberRating = $applicantInfo[AccountAttribute::Rating->value];
+    $applicable = match ($ratingCondition) {
+      1       => ($memberRating > 5),
+      2       => ($memberRating >= -1),
+      0, 3    => true
+    };
+    if (!$applicable) {
+      return 15;
     }
 
     return 1;
