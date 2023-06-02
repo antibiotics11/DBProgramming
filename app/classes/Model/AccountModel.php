@@ -73,8 +73,18 @@ class AccountModel {
   // 회원을 평가한다.
   public static function rate(String $targetPhone, String $memberPhone, bool $like): bool {
 
+    $ratingQuery = sprintf("UPDATE %s SET %s=%s%s1 WHERE %s='%s'",
+      self::TABLE_NAME_MEMBER,
+      AccountAttribute::Rating->value, AccountAttribute::Rating->value,
+      ($like ? "+" : "-"),
+      AccountAttribute::Phone->value, $targetPhone
+    );
+
     $pdo = new PdoConnector(\MYSQL_HOSTNAME, \MYSQL_DBNAME, \MYSQL_USERNAME, \MYSQL_PASSWORD);
-    return $pdo->insert(self::TABLE_NAME_RATING, [ $targetPhone, $memberPhone, (int)$like ]);
+    return (
+      $pdo->insert(self::TABLE_NAME_RATING, [ $targetPhone, $memberPhone, (int)$like ])
+      && (bool)$pdo->submit($ratingQuery)
+    );
 
   }
 
