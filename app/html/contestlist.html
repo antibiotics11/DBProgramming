@@ -1,5 +1,5 @@
 <!--공모전 목록 화면-->
-<div class="contestlist">
+<div class="contestlist" style="margin-top:1em;">
     <div>
         <a class="aform" href="/contest/v/%d"><!--누르면 contestinfo.html로-->
             <span name="title">%s</span>
@@ -8,40 +8,22 @@
     <br>
     <div class="formli" style="margin-bottom:10px;">
         <div>
-            <span class="formtitle">
-                분야:
-            </span>
+            <span class="formtitle">분야:</span>
             <span name="field">%s</span>
         </div>
         <div>
-            <span class="formtitle">
-                기간:
-            </span>
-            <span name="beginningdate">
-              %s
-            </span>
-            <span>
-                ~
-            </span>
-            <span name="deadline">
-              %s
-            </span>
+            <span class="formtitle">기간:</span>
+            <span name="beginningdate">%s</span>
+            <span>~</span>
+            <span name="deadline">%s</span>
         </div>
         <div>
-            <span class="formtitle">
-                등급:
-            </span>
-            <span name="rating">
-              %s
-            </span>
+            <span class="formtitle">등급:</span>
+            <span name="rating">%s</span>
         </div>
         <div>
-            <span class="formtitle">
-                상태:
-            </span>
-            <span name="done">
-              %s
-            </span>
+            <span class="formtitle">상태:</span>
+            <span name="done" style="color:%s;">%s</span>
         </div>
     </div>
 </div>
