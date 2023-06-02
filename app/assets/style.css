@@ -1,6 +1,6 @@
 /**
  * 애플리케이션에 적용되는 메인 스타일시트
- * 최종 수정 시점: 2023-05-20
+ * 최종 수정 시점: 2023-06-02
  */
 
 @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding&display=swap');
@@ -155,7 +155,7 @@ div{
 }
 
 #show_account{
-    border:2px solid black;
+    /* border:2px solid black; */
     width: max-content;
     height: max-content;
 }
@@ -186,7 +186,7 @@ div{
 }
 
 #contestinfo{
-    border:2px solid black;
+    /* border:2px solid black; */
     width:max-content;
     height: max-content;
     background-color: rgb(173, 238, 217);
