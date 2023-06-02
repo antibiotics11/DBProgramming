@@ -84,7 +84,7 @@
     </ul>
 
     <!-- 게시자에게만 출력되는 버튼 -->
-    <input id="view_applicants" class="input_button" type="button" onclick="viewApplicants()" value="지원자 보기">
+    <input id="view_applicants" class="input_button" type="button" onclick="viewApplicants(document.getElementById('code').value)" value="지원자 보기">
     <input id="submit_close"    class="input_button" type="button" onclick="submitClose()"  value="모집종료">
     <input id="submit_update"   class="input_button" type="button" onclick="doUpdate()" value="수정">
     <input id="submit_delete"   class="input_button" type="button" onclick="submitDelete()" value="삭제">

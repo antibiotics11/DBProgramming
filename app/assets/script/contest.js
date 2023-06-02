@@ -168,9 +168,9 @@ function applyForContest(code) {
 
 }
 
-// 참가자 목록을 팝업으로 출력
+// 참가자 목록을 출력
 function viewApplicants(code) {
-
+  location.href = "/contest/v/a/" + code;
 }
 
 function checkValidationFields(title, headcount, beginningdate, deadline) {
