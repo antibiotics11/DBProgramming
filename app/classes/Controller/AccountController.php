@@ -269,9 +269,13 @@ class AccountController {
     if (count(AccountModel::getUserInfoByPhone($targetPhone)) &&
         count(AccountModel::getUserInfoByPhone($memberPhone))) {
       if (!count(AccountModel::getRatingByTargetAndMember($targetPhone, $memberPhone))) {
-        $result = AccountModel::rate($targetPhone, $memberPhone, (bool)$like) ? 1 : 4;
+        if (strcmp($targetPhone, $memberPhone) != 0) {
+          $result = AccountModel::rate($targetPhone, $memberPhone, (bool)$like) ? 1 : 4;
+        } else {
+          $result = 3;   // 자기 자신을 평가하려고 하면 3
+        }
       } else {
-        $result = 2;  // 이미 평가했으면 2
+        $result = 2;   // 이미 평가했으면 2
       }
     } else {
       $result = 3;   // 일치하는 계정이 없으면 3
