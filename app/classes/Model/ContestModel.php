@@ -183,7 +183,7 @@ class ContestModel {
       $query = sprintf("%s WHERE %s=%d", $query, ContestAttribute::Code->value, $code);
     }
     if (strlen($phone) > 0) {
-      $phone = sprintf("%s AND %s='%s'", $query, ContestAttribute::Phone->value, $phone);
+      $query = sprintf("%s AND %s='%s'", $query, ContestAttribute::Phone->value, $phone);
     }
 
     $pdo = new PdoConnector(\MYSQL_HOSTNAME, \MYSQL_DBNAME, \MYSQL_USERNAME, \MYSQL_PASSWORD);
