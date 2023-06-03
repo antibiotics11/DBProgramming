@@ -1,6 +1,6 @@
 /**
  * 애플리케이션에 적용되는 메인 스타일시트
- * 최종 수정 시점: 2023-06-02
+ * 최종 수정 시점: 2023-06-03
  */
 
 @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding&display=swap');
@@ -206,13 +206,18 @@ div{
 }
 
 .contestlist{
-    border-bottom:1px gray solid;
+    border-bottom:1px #d8dee4 solid;
 }
 
 .aform{
     text-decoration: none;
     font-weight: bold;
-    color:blue;
+		font-size: 1.3em;
+    color:#0969da;
+}
+
+.aform:hover {
+	text-decoration: underline;
 }
 
 .formtitle{
