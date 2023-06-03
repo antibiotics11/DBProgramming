@@ -6,7 +6,7 @@ use \aalfiann\JSON;
 use \ContestApp\Http\{Header, StatusCode};
 use \ContestApp\Resource\{MimeType, CsvDataLoader};
 use \ContestApp\Model\{ContestAttribute, ContestModel, AccountAttribute, AccountModel};
-use \ContestApp\ViewPage\{ContestListPage, ContestCreatePage, ContestInfoPage, ErrorPage};
+use \ContestApp\ViewPage\{ContestListPage, ContestCreatePage, ContestInfoPage, ContestApplicantsPage, ErrorPage};
 use \ContestApp\System\Time;
 
 /**
@@ -289,6 +289,37 @@ class ContestController {
       CsvDataLoader::loadMajorsList(),
       CsvDataLoader::loadRegionsList()
     );
+    printf("%s", $page);
+
+  }
+
+  // 공모전 참가자 출력 (팝업으로)
+  public static function viewApplicants(int $contestCode): void {
+
+    if (!AccountController::signedIn()) {
+      self::redirectToSignin(); return;
+    }
+
+    Header::setServerHeader(Header::CONTENT_TYPE, MimeType::_HTML->value);
+
+    $contestInfo = ContestModel::getContestInfoByCode($contestCode);  // 공모전 정보
+    if (count($contestInfo) == 0) {           // 코드와 일치하는 공모전이 없는 경우
+      StatusCode::setServerStatusCode(StatusCode::NOT_FOUND);
+      printf("%s", ErrorPage::NotFound());
+      return;
+    }
+
+    $phone = AccountController::parseAccessToken()[ContestAttribute::Phone->value];
+    $applicants = ContestModel::getApplicants($contestCode);
+    $applicantsList = [];
+    for ($a = 0; $a < count($applicants); $a++) {
+      $target = $applicants[$a][AccountAttribute::Phone->value];
+      $name   = AccountModel::getUserInfoByPhone($target)[AccountAttribute::Name->value];
+      $rated  = count(AccountModel::getRatingByTargetAndMember($target, $phone));
+      $applicantsList[$a] = [ "phone" => $target, "name" => $name, "rated" => $rated ];
+    }
+
+    $page = ContestApplicantsPage::page($applicantsList);
     printf("%s", $page);
 
   }
