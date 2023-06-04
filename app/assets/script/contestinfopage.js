@@ -4,15 +4,15 @@ let memberPhone  = getCookieByName("phone").trim();
 let done = parseInt(document.getElementById("done").value);
 
 if (userIsCreator(creatorPhone, memberPhone)) {   // 현재 공모전 게시자면
-  document.getElementById("view_applicants").style.display = "block";  // 지원자 버튼 출력
+  document.getElementById("view_applicants").style.display = "inline";  // 지원자 버튼 출력
   if (done) {     // 모집종료된 공모전이면
     document.getElementById("submit_close").style.display  = "none";   // 모집종료 버튼 가리기
     document.getElementById("submit_update").style.display = "none";   // 수정 버튼 가리기
   } else {
-    document.getElementById("submit_close").style.display  = "block";  // 모집종료 버튼 출력
-    document.getElementById("submit_update").style.display = "block";  // 수정 버튼 출력
+    document.getElementById("submit_close").style.display  = "inline";  // 모집종료 버튼 출력
+    document.getElementById("submit_update").style.display = "inline";  // 수정 버튼 출력
   }
-  document.getElementById("submit_delete").style.display   = "block";  // 삭제 버튼 출력
+  document.getElementById("submit_delete").style.display   = "inline";  // 삭제 버튼 출력
   document.getElementById("submit_entry").style.display    = "none";   // 참가지원 버튼 가리기
 } else {    // 게시자가 아니면
   document.getElementById("view_applicants").style.display = "none";   // 지원자 버튼 가리기
@@ -22,7 +22,7 @@ if (userIsCreator(creatorPhone, memberPhone)) {   // 현재 공모전 게시자�
   if (done) {
     document.getElementById("submit_entry").style.display  = "none";
   } else {
-    document.getElementById("submit_entry").style.display  = "block";  // 참가지원 버튼 출력
+    document.getElementById("submit_entry").style.display  = "inline";  // 참가지원 버튼 출력
   }
 }
 
