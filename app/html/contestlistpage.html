@@ -22,30 +22,30 @@
     </script>
     -->
 
-    <select id="list_done">
+    <select id="list_done" class="search_button">
       <option value="-1" selected>전체</option>
       <option value="0">모집중인</option>
       <option value="1">마감된</option>
     </select>
-    <select id="list_major">
+    <select id="list_major" class="search_button">
       <option value="-1" selected>전체 분야</option>
       %s
     </select>
-    <select id="list_region">
+    <select id="list_region" class="search_button">
       <option value="-1" selected>전체 지역</option>
       %s
     </select>
-    <select id="list_sort_orderby">
+    <select id="list_sort_orderby" class="search_button">
       <option value="code" selected>코드 기준</option>
       <option value="title">제목 기준</option>
       <option value="beginningdate">모집시작일 기준</option>
       <option value="deadline">모집종료일 기준</option>
     </select>
-    <select id="list_sort_ascending">
+    <select id="list_sort_ascending" class="search_button">
       <option value="1" selected>오름차순</option>
       <option value="0">내림차순</option>
     </select>
-    <input type="button" id="list_sort_submit" onclick="sortList()" value="보기">
+    <input type="button" id="list_sort_submit" class="search_button" onclick="sortList()" value="보기">
     <br>
     <script type="text/javascript" src="/assets/script/xhttp.js"></script>
     <script type="text/javascript">

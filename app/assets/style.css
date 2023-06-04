@@ -185,6 +185,14 @@ div{
     margin-right: 50px;
 }
 
+.search_button {
+	background: white;
+	border: 0.1em solid #d8dee4;
+	color: black;
+	padding: 0.4em;
+	border-radius: 5px;
+}
+
 #contestinfo{
     /* border:2px solid black; */
     width:max-content;
