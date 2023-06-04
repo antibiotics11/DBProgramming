@@ -7,11 +7,13 @@ class ContestApplicantsPage {
   private const VIEW_CONTEST_APPLICANTS_INFO = \APP_VIEW_PATH . "/applicantinfo.html";
   private static function loadApplicantsList(Array $applicantsList): String {
 
+    $applicants = "";
     $phoneFormatter = fn($phone) => preg_replace("/([0-9]{3})([0-9]{4})([0-9]{4})/", "$1-$2-$3", $phone);
 
     $applicantInfoForm = ViewPage::read(self::VIEW_CONTEST_APPLICANTS_INFO);
-    $applicants = "";
-    for ($a = 0; $a < count($applicantsList); $a++) {
+    $count = count($applicantsList);
+
+    for ($a = 0; $a < $count; $a++) {
 
       $applicantInfo = sprintf($applicantInfoForm,
         $applicantsList[$a]["phone"], $applicantsList[$a]["name"],
@@ -25,6 +27,10 @@ class ContestApplicantsPage {
       );
       $applicants = sprintf("%s\r\n%s", $applicants, $applicantInfo);
 
+    }
+
+    if ($count == 0) {
+      $applicants = "<script type=\"text/javascript\">alert(\"지원자가 없습니다.\");history.back()</script>";
     }
 
     return $applicants;

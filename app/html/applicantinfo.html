@@ -1,18 +1,21 @@
-<span class="account_common_info">
-  <a class="applicant_name" href="/account/info/%s">%s</a>
-  <a class="applicant_phone" href="sms:+82%s">%s</a>
-</span>
-<span id="applicant_rate_buttons_%s">
-  <input type="button" onclick="rateMember('%s',1)" value="추천(+1)">
-  <input type="button" onclick="rateMember('%s',0)" value="비추천(-1)">
-</span>
-<span id="applicant_rate_result_%s">이미 평가했습니다.</span>
-<script type="text/javascript">
-  if (%d) {    // 이미 평가했으면
-    document.getElementById("applicant_rate_buttons_%s").style.display="none";
-    document.getElementById("applicant_rate_result_%s").style.display="block";
-  } else {
-    document.getElementById("applicant_rate_buttons_%s").style.display="block";
-    document.getElementById("applicant_rate_result_%s").style.display="none";
-  }
-</script>
+<div class="applicant">
+  <span class="account_common_info">
+    <a class="applicant_name" href="/account/info/%s">%s</a>
+    <a class="applicant_phone" href="sms:+82%s">%s</a>
+  </span>
+  &nbsp;&nbsp;&nbsp;
+  <span id="applicant_rate_buttons_%s">
+    <input type="button" class="rate_button" onclick="rateMember('%s',1)" value="추천(+1)">
+    <input type="button" class="rate_button" onclick="rateMember('%s',0)" value="비추천(-1)">
+  </span>
+  <span class="rate_result" id="applicant_rate_result_%s">이미 평가했습니다.</span>
+  <script type="text/javascript">
+    if (%d) {    // 이미 평가했으면
+      document.getElementById("applicant_rate_buttons_%s").style.display="none";
+      document.getElementById("applicant_rate_result_%s").style.display="inline";
+    } else {
+      document.getElementById("applicant_rate_buttons_%s").style.display="inline";
+      document.getElementById("applicant_rate_result_%s").style.display="none";
+    }
+  </script>
+</div>

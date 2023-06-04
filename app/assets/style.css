@@ -1,6 +1,6 @@
 /**
  * 애플리케이션에 적용되는 메인 스타일시트
- * 최종 수정 시점: 2023-06-03
+ * 최종 수정 시점: 2023-06-04
  */
 
 @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding&display=swap');
@@ -222,6 +222,50 @@ div{
 
 .formtitle{
     font-weight: bold;
+}
+
+#applicants {
+	background-color: white;
+	border-radius: 5px;
+	padding: 1em;
+	margin-bottom: 1.7em;
+}
+
+.applicant {
+	margin-bottom: 1em;
+}
+
+.rate_button {
+	cursor: pointer;
+	background: #45d3c0;
+	color: white;
+	border: 0.1em solid #45d3c0;
+	border-radius: 50px 50px;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+	padding-top: 0.3em;
+	padding-bottom: 0.3em;
+}
+
+.applicant_phone {
+	color: #0969da;
+	font-size: 1.2em;
+	text-decoration: none;
+}
+
+.applicant_name {
+	color: black;
+	font-size: 1.2em;
+	text-decoration: none;
+}
+
+.applicant_name:hover, .applicant_phone:hover {
+	text-decoration: underline;
+}
+
+.rate_result {
+	color: grey;
+	font-size: 1em;
 }
 
 /* 에러 페이지 */
