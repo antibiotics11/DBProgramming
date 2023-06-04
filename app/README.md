@@ -6,7 +6,7 @@
 
 <table>
 	<tr>
-		<td><bOS</b></td>
+		<td><b>OS</b></td>
 		<td>Ubuntu Server 23.04</td>
 	</tr>
 	<tr>
