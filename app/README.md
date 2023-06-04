@@ -6,15 +6,15 @@
 
 <table>
 	<tr>
-		<td>OS</td>
+		<td><bOS</b></td>
 		<td>Ubuntu Server 23.04</td>
 	</tr>
 	<tr>
-		<td>Language</td>
+		<td><b>Language</b></td>
 		<td>PHP 8.1</td>
 	</tr>
 	<tr>
-		<td>DBMS</td>
+		<td><b>DBMS</b></td>
 		<td>MySQL 8.0</td>
 	</tr>
 </table>
@@ -22,7 +22,7 @@
 ## 오픈소스 라이브러리
 
 - <b>Router</b>&nbsp; <a href = "https://github.com/bramus/router">https://github.com/bramus/router</a>
-- <b>PHP-JWT</b>&nsbp; <a href = "https://github.com/firebase/php-jwt">https://github.com/firebase/php-jwt</a>
+- <b>PHP-JWT</b>&nbsp; <a href = "https://github.com/firebase/php-jwt">https://github.com/firebase/php-jwt</a>
 - <b>Cookies</b>&nbsp; <a href = "https://github.com/commandstring/cookies">https://github.com/commandstring/cookies</a>
 - <b>JSON Class PHP</b>&nbsp; <a href = "https://github.com/aalfiann/json-class-php">https://github.com/aalfiann/json-class-php</a>
 - <b>ParseCsv</b>&nbsp; <a href = "https://github.com/parsecsv/parsecsv-for-php">https://github.com/parsecsv/parsecsv-for-php</a>
