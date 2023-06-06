@@ -16,8 +16,8 @@ class ContestModel {
   public static function getSelectQuery(Array $filters = [], String $sortBy = "code", bool $ascending = false): String {
 
     $where = "1=1";
-    foreach ($filters as $columnName => $columnValue) {
-      $where = sprintf("%s AND %s='%s'", $where, $columnName, $columnValue);
+    foreach ($filters as $attributeName => $attributeValue) {
+      $where = sprintf("%s AND %s='%s'", $where, $attributeName, $attributeValue);
     }
 
     $query = sprintf("%s WHERE %s ORDER BY %s %s",
